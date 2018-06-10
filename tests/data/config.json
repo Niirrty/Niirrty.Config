@@ -1,0 +1,29 @@
+[
+    {
+        "name": "default",
+        "description": "A optional section description\u2026",
+        "items": [
+            {
+                "name": "foo",
+                "description": "A optional item description\u2026",
+                "type": "bool",
+                "nullable": false,
+                "value": false
+            },
+            {
+                "name": "bar",
+                "description": null,
+                "type": "int",
+                "nullable": true,
+                "value": 1234
+            },
+            {
+                "name": "baz",
+                "description": null,
+                "type": "string",
+                "nullable": true,
+                "value": null
+            }
+        ]
+    }
+]
