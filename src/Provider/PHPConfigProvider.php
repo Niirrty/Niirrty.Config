@@ -14,13 +14,11 @@ declare( strict_types = 1 );
 namespace Niirrty\Config\Provider;
 
 
-use Niirrty\Config\ConfigItem;
-use Niirrty\Config\ConfigSection;
-use Niirrty\Config\Configuration;
-use Niirrty\Config\Exceptions\ConfigParseException;
-use Niirrty\Config\Exceptions\ConfigProviderException;
-use Niirrty\Config\IConfiguration;
-use Niirrty\Type;
+use Niirrty\{ArgumentException, NiirrtyException, Type};
+use Niirrty\Config\{ConfigItem, ConfigSection, Configuration, IConfiguration};
+use Niirrty\Config\Exceptions\{ConfigParseException, ConfigProviderException, ConfigProviderOptionException};
+use Niirrty\IO\FileAccessException;
+use Niirrty\IO\Vfs\VfsManager;
 
 
 class PHPConfigProvider extends AbstractFileConfigProvider implements IConfigProvider
@@ -44,9 +42,9 @@ class PHPConfigProvider extends AbstractFileConfigProvider implements IConfigPro
     * Reads all available configuration items from the source.
     *
     * @param string[]|null $sectionNames
-    * @return \Niirrty\Config\IConfiguration
-    * @throws \Niirrty\Config\Exceptions\ConfigParseException
-    * @throws \Niirrty\Config\Exceptions\ConfigProviderException
+    * @return IConfiguration
+    * @throws ConfigParseException
+    * @throws ConfigProviderException|ArgumentException
     */
    public function read( ?array $sectionNames = null ) : IConfiguration
    {
@@ -182,10 +180,10 @@ class PHPConfigProvider extends AbstractFileConfigProvider implements IConfigPro
    /**
     * Writes the config to the source.
     *
-    * @param \Niirrty\Config\IConfiguration $config
-    * @return \Niirrty\Config\Provider\PHPConfigProvider
-    * @throws \Niirrty\Config\Exceptions\ConfigProviderException
-    * @throws \Niirrty\IO\FileAccessException
+    * @param IConfiguration $config
+    * @return PHPConfigProvider
+    * @throws ConfigProviderException
+    * @throws FileAccessException
     */
    public function write( IConfiguration $config )
    {
@@ -221,21 +219,15 @@ class PHPConfigProvider extends AbstractFileConfigProvider implements IConfigPro
          foreach ( $section as $itm )
          {
 
-            /** @noinspection PhpUndefinedMethodInspection */
             \fwrite( $fp, ( 0 === $j ? '' : ',') . "\n         " . $this->valueToPHP( $itm->getName() ) . ' => [' );
 
-            /** @noinspection PhpUndefinedMethodInspection */
             if ( null !== $itm->getDescription() )
             {
-               /** @noinspection PhpUndefinedMethodInspection */
                \fwrite( $fp, "\n            'description' => " . $this->valueToPHP( $itm->getDescription() ) . ',' );
             }
 
-            /** @noinspection PhpUndefinedMethodInspection */
             \fwrite( $fp, "\n            'nullable' => " . $this->valueToPHP( $itm->isNullable() ) . ',' );
-            /** @noinspection PhpUndefinedMethodInspection */
             \fwrite( $fp, "\n            'type' => " . $this->valueToPHP( $itm->getType() ) . ',' );
-            /** @noinspection PhpUndefinedMethodInspection */
             \fwrite( $fp, "\n            'value' => " . $this->valueToPHP( $itm->getValue() ) . ',' );
 
             \fwrite( $fp, "\n         ]" );
@@ -266,7 +258,6 @@ class PHPConfigProvider extends AbstractFileConfigProvider implements IConfigPro
     *
     * @param string $name  The option name.
     * @param mixed  $value The option value.
-    * @throws \Niirrty\Config\Exceptions\ConfigProviderOptionException If a wrong option value is defined.
     */
    protected function validateOption( string $name, $value )
    {
@@ -280,27 +271,34 @@ class PHPConfigProvider extends AbstractFileConfigProvider implements IConfigPro
    private function valueToPHP( $value )
    {
 
-      return ( new Type( $value ) )->getPhpCode();
+       try {
+           return (new Type($value))->getPhpCode();
+       } catch (NiirrtyException $e) {
+           return '';
+       }
 
    }
 
 
-   /**
-    * Init a new PHP config provider.
-    *
-    * @param string $file       The path of the PHP config file.
-    * @param array  $extensions Allowed PHP file name extensions.
-    * @param string $name       The name of the PHP provider.
-    * @return \Niirrty\Config\Provider\PHPConfigProvider
-    */
-   public static function Init( string $file, array $extensions = [ 'php' ], string $name = 'PHP' )
+    /**
+     * Init a new PHP config provider.
+     *
+     * @param string $file The path of the PHP config file.
+     * @param array $extensions Allowed PHP file name extensions.
+     * @param string $name The name of the PHP provider.
+     * @param VfsManager $vfsManager Optional VFS Manager to handle VFS paths
+     * @return PHPConfigProvider
+     * @throws ConfigProviderOptionException
+     */
+   public static function Init(
+       string $file, array $extensions = [ 'php' ], string $name = 'PHP', VfsManager $vfsManager = null )
       : PHPConfigProvider
    {
 
       $provider = new PHPConfigProvider( $name );
 
       $provider->setExtensions( $extensions );
-      $provider->setFile( $file );
+      $provider->setFile( $file, $vfsManager );
 
       return $provider;
 

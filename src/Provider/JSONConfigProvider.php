@@ -14,12 +14,11 @@ declare( strict_types = 1 );
 namespace Niirrty\Config\Provider;
 
 
-use Niirrty\Config\ConfigItem;
-use Niirrty\Config\ConfigSection;
-use Niirrty\Config\Configuration;
-use Niirrty\Config\Exceptions\ConfigParseException;
-use Niirrty\Config\Exceptions\ConfigProviderException;
-use Niirrty\Config\IConfiguration;
+use Niirrty\ArgumentException;
+use Niirrty\Config\{ConfigItem, ConfigSection, Configuration, IConfiguration};
+use Niirrty\Config\Exceptions\{ConfigParseException, ConfigProviderException, ConfigProviderOptionException};
+use Niirrty\IO\FileAccessException;
+use Niirrty\IO\Vfs\VfsManager;
 
 
 /**
@@ -83,15 +82,16 @@ class JSONConfigProvider extends AbstractFileConfigProvider implements IConfigPr
    }
 
 
-   /**
-    * Reads all available configuration items from the source.
-    *
-    * @param string[]|null $sectionNames
-    * @return \Niirrty\Config\IConfiguration
-    * @throws \Niirrty\Config\Exceptions\ConfigParseException
-    * @throws \Niirrty\Config\Exceptions\ConfigProviderException
-    * @throws \Niirrty\IO\FileAccessException
-    */
+    /**
+     * Reads all available configuration items from the source.
+     *
+     * @param string[]|null $sectionNames
+     * @return IConfiguration
+     * @throws ConfigParseException
+     * @throws ConfigProviderException
+     * @throws FileAccessException
+     * @throws ArgumentException
+     */
    public function read( ?array $sectionNames = null ) : IConfiguration
    {
 
@@ -217,10 +217,10 @@ class JSONConfigProvider extends AbstractFileConfigProvider implements IConfigPr
    /**
     * Writes the config to the source.
     *
-    * @param \Niirrty\Config\IConfiguration $config
-    * @return \Niirrty\Config\Provider\JSONConfigProvider
-    * @throws \Niirrty\Config\Exceptions\ConfigProviderException
-    * @throws \Niirrty\IO\FileAccessException
+    * @param IConfiguration $config
+    * @return JSONConfigProvider
+    * @throws ConfigProviderException
+    * @throws FileAccessException
     */
    public function write( IConfiguration $config )
    {
@@ -252,7 +252,6 @@ class JSONConfigProvider extends AbstractFileConfigProvider implements IConfigPr
     *
     * @param string $name  The option name.
     * @param mixed  $value The option value.
-    * @throws \Niirrty\Config\Exceptions\ConfigProviderOptionException If a wrong option value is defined.
     */
    protected function validateOption( string $name, $value )
    {
@@ -262,22 +261,25 @@ class JSONConfigProvider extends AbstractFileConfigProvider implements IConfigPr
    }
 
 
-   /**
-    * Init a new JSON config provider.
-    *
-    * @param string $file       The path of the JSON config file.
-    * @param array  $extensions Allowed JSON file name extensions.
-    * @param string $name       The name of the JSO provider.
-    * @return \Niirrty\Config\Provider\JSONConfigProvider
-    */
-   public static function Init( string $file, array $extensions = [ 'json' ], string $name = 'JSON' )
+    /**
+     * Init a new JSON config provider.
+     *
+     * @param string $file The path of the JSON config file.
+     * @param array $extensions Allowed JSON file name extensions.
+     * @param string $name The name of the JSO provider.
+     * @param VfsManager $vfsManager Optional VFS Manager to handle VFS paths
+     * @return JSONConfigProvider
+     * @throws ConfigProviderOptionException
+     */
+   public static function Init(
+       string $file, array $extensions = [ 'json' ], string $name = 'JSON', VfsManager $vfsManager = null )
       : JSONConfigProvider
    {
 
       $provider = new JSONConfigProvider( $name );
 
       $provider->setExtensions( $extensions );
-      $provider->setFile( $file );
+      $provider->setFile( $file, $vfsManager );
 
       return $provider;
 

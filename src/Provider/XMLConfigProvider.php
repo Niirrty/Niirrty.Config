@@ -14,14 +14,10 @@ declare( strict_types = 1 );
 namespace Niirrty\Config\Provider;
 
 
-use Niirrty\Config\ConfigItem;
-use Niirrty\Config\ConfigSection;
-use Niirrty\Config\Configuration;
-use Niirrty\Config\Exceptions\ConfigParseException;
-use Niirrty\Config\Exceptions\ConfigProviderException;
-use Niirrty\Config\IConfiguration;
-use Niirrty\TypeTool;
-use Niirrty\XmlAttributeHelper;
+use Niirrty\{ArgumentException, TypeTool, XmlAttributeHelper};
+use Niirrty\Config\{ConfigItem, ConfigSection, Configuration, IConfiguration};
+use Niirrty\Config\Exceptions\{ConfigParseException, ConfigProviderException, ConfigProviderOptionException};
+use Niirrty\IO\Vfs\VfsManager;
 
 
 class XMLConfigProvider extends AbstractFileConfigProvider implements IConfigProvider
@@ -41,14 +37,15 @@ class XMLConfigProvider extends AbstractFileConfigProvider implements IConfigPro
    }
 
 
-   /**
-    * Reads all available configuration items from the source.
-    *
-    * @param string[]|null $sectionNames
-    * @return \Niirrty\Config\IConfiguration
-    * @throws \Niirrty\Config\Exceptions\ConfigParseException
-    * @throws \Niirrty\Config\Exceptions\ConfigProviderException
-    */
+    /**
+     * Reads all available configuration items from the source.
+     *
+     * @param string[]|null $sectionNames
+     * @return IConfiguration
+     * @throws ConfigParseException
+     * @throws ConfigProviderException
+     * @throws ArgumentException
+     */
    public function read( ?array $sectionNames = null ) : IConfiguration
    {
 
@@ -212,9 +209,9 @@ class XMLConfigProvider extends AbstractFileConfigProvider implements IConfigPro
    /**
     * Writes the config to the source.
     *
-    * @param \Niirrty\Config\IConfiguration $config
-    * @return \Niirrty\Config\Provider\XMLConfigProvider
-    * @throws \Niirrty\Config\Exceptions\ConfigProviderException
+    * @param IConfiguration $config
+    * @return XMLConfigProvider
+    * @throws ConfigProviderException
     */
    public function write( IConfiguration $config )
    {
@@ -257,13 +254,9 @@ class XMLConfigProvider extends AbstractFileConfigProvider implements IConfigPro
          foreach ( $section as $item )
          {
             $xmlWriter->startElement( 'Item' );
-            /** @noinspection PhpUndefinedMethodInspection */
             $xmlWriter->writeAttribute( 'name', $item->getName() );
-            /** @noinspection PhpUndefinedMethodInspection */
             $xmlWriter->writeAttribute( 'type', $item->getType() );
-            /** @noinspection PhpUndefinedMethodInspection */
             $xmlWriter->writeAttribute( 'nullable', $item->isNullable() ? 'true' : 'false' );
-            /** @noinspection PhpUndefinedMethodInspection */
             switch ( $item->getType() )
             {
                case 'bool':
@@ -276,20 +269,16 @@ class XMLConfigProvider extends AbstractFileConfigProvider implements IConfigPro
                case '\\DateTime':
                case 'Niirrty\\Date\\DateTime':
                case '\\Niirrty\\Date\\DateTime':
-                  /** @noinspection PhpUndefinedMethodInspection */
                   $xmlWriter->writeAttribute( 'value', $item->getStringValue() );
                   break;
 
                default:
-                  /** @noinspection PhpUndefinedMethodInspection */
                   $xmlWriter->writeElement( 'Value', $item->getStringValue() );
                   break;
 
             }
-            /** @noinspection PhpUndefinedMethodInspection */
             if ( null !== $item->getDescription() )
             {
-               /** @noinspection PhpUndefinedMethodInspection */
                $xmlWriter->writeElement( 'Description', $item->getDescription() );
             }
             $xmlWriter->endElement(); // </item>
@@ -313,7 +302,6 @@ class XMLConfigProvider extends AbstractFileConfigProvider implements IConfigPro
     *
     * @param string $name  The option name.
     * @param mixed  $value The option value.
-    * @throws \Niirrty\Config\Exceptions\ConfigProviderOptionException If a wrong option value is defined.
     */
    protected function validateOption( string $name, $value )
    {
@@ -322,22 +310,25 @@ class XMLConfigProvider extends AbstractFileConfigProvider implements IConfigPro
 
    }
 
-   /**
-    * Init a new XML config provider.
-    *
-    * @param string $file       The path of the XML config file.
-    * @param array  $extensions Allowed XML file name extensions.
-    * @param string $name       The name of the XML provider.
-    * @return \Niirrty\Config\Provider\XMLConfigProvider
-    */
-   public static function Init( string $file, array $extensions = [ 'xml' ], string $name = 'XML' )
+    /**
+     * Init a new XML config provider.
+     *
+     * @param string $file The path of the XML config file.
+     * @param array $extensions Allowed XML file name extensions.
+     * @param string $name The name of the XML provider.
+     * @param VfsManager $vfsManager Optional VFS Manager to handle VFS paths
+     * @return XMLConfigProvider
+     * @throws ConfigProviderOptionException
+     */
+   public static function Init(
+       string $file, array $extensions = [ 'xml' ], string $name = 'XML', VfsManager $vfsManager = null )
       : XMLConfigProvider
    {
 
       $provider = new XMLConfigProvider( $name );
 
       $provider->setExtensions( $extensions );
-      $provider->setFile( $file );
+      $provider->setFile( $file, $vfsManager );
 
       return $provider;
 
