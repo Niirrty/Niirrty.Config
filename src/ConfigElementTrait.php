@@ -1,10 +1,10 @@
 <?php
 /**
  * @author         Ni Irrty <niirrty+code@gmail.com>
- * @copyright  (c) 2017, Ni Irrty
+ * @copyright      © 2017-2020, Ni Irrty
  * @license        MIT
  * @since          2018-05-20
- * @version        0.1.0
+ * @version        0.3.0
  */
 
 
@@ -15,36 +15,36 @@ trait ConfigElementTrait
 {
 
 
-   /** @type string */
-   protected $_name;
+    /** @type string */
+    protected $_name;
 
-   /** @type string|null */
-   protected $_description;
+    /** @type string|null */
+    protected $_description;
 
 
-   /**
-    * Gets the name of the configuration element.
-    *
-    * @return string
-    */
-   public function getName() : string
-   {
+    /**
+     * Gets the name of the configuration element.
+     *
+     * @return string
+     */
+    public function getName(): string
+    {
 
-      return $this->_name;
+        return $this->_name;
 
-   }
+    }
 
-   /**
-    * Gets the optional Description, or NULL if no description exists.
-    *
-    * @return null|string
-    */
-   public function getDescription() : ?string
-   {
+    /**
+     * Gets the optional Description, or NULL if no description exists.
+     *
+     * @return null|string
+     */
+    public function getDescription(): ?string
+    {
 
-      return $this->_description;
+        return $this->_description;
 
-   }
+    }
 
 
 }

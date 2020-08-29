@@ -24,291 +24,317 @@ class JSONConfigProviderTest extends TestCase
 {
 
 
-   /** @type \Niirrty\Config\Provider\JSONConfigProvider */
-   private $_provider;
+    /** @type JSONConfigProvider */
+    private $_provider;
 
-   public function setUp()
-   {
+    public function setUp()
+    {
 
-      $this->_provider = JSONConfigProvider::Init( __DIR__ . '/../../../data/config.json' );
+        $this->_provider = JSONConfigProvider::Init( __DIR__ . '/../../../data/config.json' );
 
-      parent::setUp();
+        parent::setUp();
 
-   }
+    }
 
 
-   public function test_getName()
-   {
+    public function test_getName()
+    {
 
-      $this->assertSame( 'JSON', $this->_provider->getName() );
+        $this->assertSame( 'JSON', $this->_provider->getName() );
 
-   }
-   public function test_isValid()
-   {
+    }
 
-      $this->assertTrue( $this->_provider->isValid() );
+    public function test_isValid()
+    {
 
-   }
-   public function test_getOptions()
-   {
+        $this->assertTrue( $this->_provider->isValid() );
 
-      $this->assertSame(
-         [ 'file' => __DIR__ . '/../../../data/config.json',
-           'extensions' => [ 'json' ] ],
-         $this->_provider->getOptions()
-      );
+    }
 
-   }
-   public function test_getOption()
-   {
+    public function test_getOptions()
+    {
 
-      $this->assertSame( [ 'json' ], $this->_provider->getOption( 'extensions' ) );
-      $this->assertSame( __DIR__ . '/../../../data/config.json', $this->_provider->getOption( 'file' ) );
-      $this->assertNull( $this->_provider->getOption( 'no-existing-item' ) );
+        $this->assertSame(
+            [ 'file'       => __DIR__ . '/../../../data/config.json',
+              'extensions' => [ 'json' ] ],
+            $this->_provider->getOptions()
+        );
 
-   }
-   public function test_getOptionNames()
-   {
+    }
 
-      $this->assertSame(
-         [ 'file', 'extensions' ],
-         $this->_provider->getOptionNames()
-      );
+    public function test_getOption()
+    {
 
-   }
-   public function test_setOption()
-   {
+        $this->assertSame( [ 'json' ], $this->_provider->getOption( 'extensions' ) );
+        $this->assertSame( __DIR__ . '/../../../data/config.json', $this->_provider->getOption( 'file' ) );
+        $this->assertNull( $this->_provider->getOption( 'no-existing-item' ) );
 
-      $this->_provider->setOption( 'extensions', [ 'json', 'jsonx' ] );
-      $this->assertSame(
-         [ 'file' => __DIR__ . '/../../../data/config.json',
-           'extensions' => [ 'json', 'jsonx' ] ],
-         $this->_provider->getOptions()
-      );
-      $this->_provider->setOption( 'foo', ':-)' );
+    }
 
-   }
-   public function test_setOptionException1()
-   {
+    public function test_getOptionNames()
+    {
 
-      $this->expectException( ConfigProviderOptionException::class );
-      $this->_provider->setOption( 'extensions', [ 'jsonp' ] );
+        $this->assertSame(
+            [ 'file', 'extensions' ],
+            $this->_provider->getOptionNames()
+        );
 
-   }
-   public function test_setOptionException2()
-   {
+    }
 
-      $this->expectException( \TypeError::class );
-      $this->_provider->setOption( 'file', null );
+    public function test_setOption()
+    {
 
-   }
-   public function test_hasOption()
-   {
+        $this->_provider->setOption( 'extensions', [ 'json', 'jsonx' ] );
+        $this->assertSame(
+            [ 'file'       => __DIR__ . '/../../../data/config.json',
+              'extensions' => [ 'json', 'jsonx' ] ],
+            $this->_provider->getOptions()
+        );
+        $this->_provider->setOption( 'foo', ':-)' );
 
-      $this->assertTrue( $this->_provider->hasOption( 'file' ) );
-      $this->assertTrue( $this->_provider->hasOption( 'extensions' ) );
-      $this->assertFalse( $this->_provider->hasOption( 'foo' ) );
+    }
 
-   }
-   public function test_setFile()
-   {
+    public function test_setOptionException1()
+    {
 
-      $this->_provider->setFile( __DIR__ . '/../../../data/config-copy.json' );
-      $this->assertTrue( $this->_provider->isValid() );
-      $this->assertSame( __DIR__ . '/../../../data/config-copy.json', $this->_provider->getFile() );
+        $this->expectException( ConfigProviderOptionException::class );
+        $this->_provider->setOption( 'extensions', [ 'jsonp' ] );
 
-   }
-   public function test_setFileException1()
-   {
+    }
 
-      $this->expectException( ConfigProviderOptionException::class );
-      $this->_provider->setFile( __DIR__ . '/../../../data/config.xml' );
+    public function test_setOptionException2()
+    {
 
-   }
-   public function test_setExtensionsException1()
-   {
+        $this->expectException( \TypeError::class );
+        $this->_provider->setOption( 'file', null );
 
-      $this->expectException( ConfigProviderOptionException::class );
-      $this->_provider->setExtensions( [] );
+    }
 
-   }
-   public function test_setExtensionsException2()
-   {
+    public function test_hasOption()
+    {
 
-      $this->expectException( ConfigProviderOptionException::class );
-      $this->_provider->setExtensions( [ 'json', 1 ] );
+        $this->assertTrue( $this->_provider->hasOption( 'file' ) );
+        $this->assertTrue( $this->_provider->hasOption( 'extensions' ) );
+        $this->assertFalse( $this->_provider->hasOption( 'foo' ) );
 
-   }
-   public function test_read()
-   {
+    }
 
-      $config = $this->_provider->read();
-      $this->assertInstanceOf( IConfiguration::class, $config );
-      $this->assertEquals(
-         [ [
-            'name' => 'default',
-            'description' => 'A optional section description…',
-            'items' => [
-               [
-                  'name' => 'foo',
-                  'description' => 'A optional item description…',
-                  'nullable' => false,
-                  'type' => 'bool',
-                  'value' => false
-               ],
-               [
-                  'name' => 'bar',
-                  'nullable' => true,
-                  'type' => 'int',
-                  'value' => 1234,
-                  'description' => null
-               ],
-               [
-                  'name' => 'baz',
-                  'nullable' => true,
-                  'type' => 'string',
-                  'value' => null,
-                  'description' => null
-               ]
-            ]
-         ] ],
-         $config->toArray()
-      );
+    public function test_setFile()
+    {
 
-      $config = $this->_provider->read( [ 'unknownSection' ] );
+        $this->_provider->setFile( __DIR__ . '/../../../data/config-copy.json' );
+        $this->assertTrue( $this->_provider->isValid() );
+        $this->assertSame( __DIR__ . '/../../../data/config-copy.json', $this->_provider->getFile() );
 
-      $this->assertSame( 0, \count( $config ) );
+    }
 
-      $config = $this->_provider->read( [] );
+    public function test_setFileException1()
+    {
 
-      $this->assertSame( 1, \count( $config ) );
+        $this->expectException( ConfigProviderOptionException::class );
+        $this->_provider->setFile( __DIR__ . '/../../../data/config.xml' );
 
-      $configFile = __DIR__ . '/../../../data/config-no-existing.json';
-      if ( \file_exists( $configFile ) ) { \unlink( $configFile ); }
-      $this->_provider->setFile( $configFile );
-      $config = $this->_provider->read();
-      $this->assertSame( 0, \count( $config ) );
+    }
 
-   }
-   public function test_readException1()
-   {
+    public function test_setExtensionsException1()
+    {
 
-      $this->expectException( ConfigProviderException::class );
-      $this->_provider->setFile( __DIR__ . '/../../../data/config-empty.json' );
-      $this->_provider->read();
+        $this->expectException( ConfigProviderOptionException::class );
+        $this->_provider->setExtensions( [] );
 
-   }
-   public function test_readException2()
-   {
+    }
 
-      $this->expectException( ConfigProviderException::class );
-      $this->_provider->setFile( __DIR__ . '/../../../data/config-invalid-format.json' );
-      $this->_provider->read();
+    public function test_setExtensionsException2()
+    {
 
-   }
-   public function test_readException3()
-   {
+        $this->expectException( ConfigProviderOptionException::class );
+        $this->_provider->setExtensions( [ 'json', 1 ] );
 
-      $this->expectException( ConfigProviderException::class );
-      $this->_provider->setFile( __DIR__ . '/../../../data/config-invalid-data1.json' );
-      $this->_provider->read();
+    }
 
-   }
-   public function test_readException4()
-   {
+    public function test_read()
+    {
 
-      $rootFolder = Path::Combine( \sys_get_temp_dir(), 'Niirty.Config.Tests' );
-      if ( ! \is_dir( $rootFolder ) )
-      {
-         \mkdir( $rootFolder );
-      }
-      $configFile = $rootFolder . '/config.json';
-      if ( @\is_file( $configFile ) && \file_exists( $configFile ) )
-      {
-         \chmod( $configFile, 0700 );
-         \unlink( $configFile );
-      }
-      \file_put_contents( $configFile, \json_encode( [ [ 'name' => 'default' ] ] ) );
-      \chmod( $configFile, 0000 );
-      $this->expectException( ConfigProviderException::class );
-      $this->_provider->setFile( $configFile );
-      $this->_provider->read();
-      \chmod( $configFile, 0700 );
-      \unlink( $configFile );
+        $config = $this->_provider->read();
+        $this->assertInstanceOf( IConfiguration::class, $config );
+        $this->assertEquals(
+            [ [
+                  'name'        => 'default',
+                  'description' => 'A optional section description…',
+                  'items'       => [
+                      [
+                          'name'        => 'foo',
+                          'description' => 'A optional item description…',
+                          'nullable'    => false,
+                          'type'        => 'bool',
+                          'value'       => false,
+                      ],
+                      [
+                          'name'        => 'bar',
+                          'nullable'    => true,
+                          'type'        => 'int',
+                          'value'       => 1234,
+                          'description' => null,
+                      ],
+                      [
+                          'name'        => 'baz',
+                          'nullable'    => true,
+                          'type'        => 'string',
+                          'value'       => null,
+                          'description' => null,
+                      ],
+                  ],
+              ] ],
+            $config->toArray()
+        );
 
-   }
-   public function test_readException5()
-   {
+        $config = $this->_provider->read( [ 'unknownSection' ] );
 
-      $rootFolder = Path::Combine( \sys_get_temp_dir(), 'Niirty.Config.Tests' );
-      if ( ! \is_dir( $rootFolder ) )
-      {
-         \mkdir( $rootFolder );
-      }
-      $configFile = $rootFolder . '/config.json';
-      if ( @\is_file( $configFile ) && \file_exists( $configFile ) )
-      {
-         \chmod( $configFile, 0700 );
-         \unlink( $configFile );
-      }
-      \file_put_contents( $configFile, \json_encode( [ [ 'name' => 'default', 'items' => [ [ 'foo' => 14 ] ] ] ] ) );
-      $this->expectException( ConfigParseException::class );
-      $this->_provider->setFile( $configFile );
-      $this->_provider->read();
-      \unlink( $configFile );
+        $this->assertSame( 0, \count( $config ) );
 
-   }
-   public function test_readException6()
-   {
+        $config = $this->_provider->read( [] );
 
-      $rootFolder = Path::Combine( \sys_get_temp_dir(), 'Niirty.Config.Tests' );
-      if ( ! \is_dir( $rootFolder ) )
-      {
-         \mkdir( $rootFolder );
-      }
-      $configFile = $rootFolder . '/config.json';
-      if ( @\is_file( $configFile ) && \file_exists( $configFile ) )
-      {
-         \chmod( $configFile, 0700 );
-         \unlink( $configFile );
-      }
-      \file_put_contents( $configFile, \json_encode( [ [ 'name' => 'default', 'items' => [ [ 'name' => 'abc' ] ] ] ] ) );
-      $this->expectException( ConfigParseException::class );
-      $this->_provider->setFile( $configFile );
-      $this->_provider->read();
-      \unlink( $configFile );
+        $this->assertSame( 1, \count( $config ) );
 
-   }
-   public function test_readException7()
-   {
+        $configFile = __DIR__ . '/../../../data/config-no-existing.json';
+        if ( \file_exists( $configFile ) )
+        {
+            \unlink( $configFile );
+        }
+        $this->_provider->setFile( $configFile );
+        $config = $this->_provider->read();
+        $this->assertSame( 0, \count( $config ) );
 
-      $rootFolder = Path::Combine( \sys_get_temp_dir(), 'Niirty.Config.Tests' );
-      if ( ! \is_dir( $rootFolder ) )
-      {
-         \mkdir( $rootFolder );
-      }
-      $configFile = $rootFolder . '/config.json';
-      if ( @\is_file( $configFile ) && \file_exists( $configFile ) )
-      {
-         \chmod( $configFile, 0700 );
-         \unlink( $configFile );
-      }
-      \file_put_contents( $configFile, \json_encode( [ [ 'name' => 'default', 'items' => [ [ 'name' => 'abc', 'type' => '\\DateTime', 'value' => new \stdClass() ] ] ] ] ) );
-      $this->expectException( ConfigParseException::class );
-      $this->_provider->setFile( $configFile );
-      $this->_provider->read();
-      \unlink( $configFile );
+    }
 
-   }
-   public function test_write()
-   {
+    public function test_readException1()
+    {
 
-      $config = $this->_provider->read();
-      $newFile = __DIR__ . '/../../../data/config-tmp.json';
-      \touch( $newFile );
-      $this->_provider->setFile( $newFile );
-      $this->_provider->write( $config );
-      $this->assertSame( <<<JSON
+        $this->expectException( ConfigProviderException::class );
+        $this->_provider->setFile( __DIR__ . '/../../../data/config-empty.json' );
+        $this->_provider->read();
+
+    }
+
+    public function test_readException2()
+    {
+
+        $this->expectException( ConfigProviderException::class );
+        $this->_provider->setFile( __DIR__ . '/../../../data/config-invalid-format.json' );
+        $this->_provider->read();
+
+    }
+
+    public function test_readException3()
+    {
+
+        $this->expectException( ConfigProviderException::class );
+        $this->_provider->setFile( __DIR__ . '/../../../data/config-invalid-data1.json' );
+        $this->_provider->read();
+
+    }
+
+    public function test_readException4()
+    {
+
+        $rootFolder = Path::Combine( \sys_get_temp_dir(), 'Niirty.Config.Tests' );
+        if ( !\is_dir( $rootFolder ) )
+        {
+            \mkdir( $rootFolder );
+        }
+        $configFile = $rootFolder . '/config.json';
+        if ( @\is_file( $configFile ) && \file_exists( $configFile ) )
+        {
+            \chmod( $configFile, 0700 );
+            \unlink( $configFile );
+        }
+        \file_put_contents( $configFile, \json_encode( [ [ 'name' => 'default' ] ] ) );
+        \chmod( $configFile, 0000 );
+        $this->expectException( ConfigProviderException::class );
+        $this->_provider->setFile( $configFile );
+        $this->_provider->read();
+        \chmod( $configFile, 0700 );
+        \unlink( $configFile );
+
+    }
+
+    public function test_readException5()
+    {
+
+        $rootFolder = Path::Combine( \sys_get_temp_dir(), 'Niirty.Config.Tests' );
+        if ( !\is_dir( $rootFolder ) )
+        {
+            \mkdir( $rootFolder );
+        }
+        $configFile = $rootFolder . '/config.json';
+        if ( @\is_file( $configFile ) && \file_exists( $configFile ) )
+        {
+            \chmod( $configFile, 0700 );
+            \unlink( $configFile );
+        }
+        \file_put_contents( $configFile, \json_encode( [ [ 'name' => 'default', 'items' => [ [ 'foo' => 14 ] ] ] ] ) );
+        $this->expectException( ConfigParseException::class );
+        $this->_provider->setFile( $configFile );
+        $this->_provider->read();
+        \unlink( $configFile );
+
+    }
+
+    public function test_readException6()
+    {
+
+        $rootFolder = Path::Combine( \sys_get_temp_dir(), 'Niirty.Config.Tests' );
+        if ( !\is_dir( $rootFolder ) )
+        {
+            \mkdir( $rootFolder );
+        }
+        $configFile = $rootFolder . '/config.json';
+        if ( @\is_file( $configFile ) && \file_exists( $configFile ) )
+        {
+            \chmod( $configFile, 0700 );
+            \unlink( $configFile );
+        }
+        \file_put_contents( $configFile,
+                            \json_encode( [ [ 'name' => 'default', 'items' => [ [ 'name' => 'abc' ] ] ] ] ) );
+        $this->expectException( ConfigParseException::class );
+        $this->_provider->setFile( $configFile );
+        $this->_provider->read();
+        \unlink( $configFile );
+
+    }
+
+    public function test_readException7()
+    {
+
+        $rootFolder = Path::Combine( \sys_get_temp_dir(), 'Niirty.Config.Tests' );
+        if ( !\is_dir( $rootFolder ) )
+        {
+            \mkdir( $rootFolder );
+        }
+        $configFile = $rootFolder . '/config.json';
+        if ( @\is_file( $configFile ) && \file_exists( $configFile ) )
+        {
+            \chmod( $configFile, 0700 );
+            \unlink( $configFile );
+        }
+        \file_put_contents( $configFile,
+                            \json_encode( [ [ 'name' => 'default', 'items' => [ [ 'name' => 'abc', 'type' => '\\DateTime', 'value' => new \stdClass() ] ] ] ] ) );
+        $this->expectException( ConfigParseException::class );
+        $this->_provider->setFile( $configFile );
+        $this->_provider->read();
+        \unlink( $configFile );
+
+    }
+
+    public function test_write()
+    {
+
+        $config = $this->_provider->read();
+        $newFile = __DIR__ . '/../../../data/config-tmp.json';
+        \touch( $newFile );
+        $this->_provider->setFile( $newFile );
+        $this->_provider->write( $config );
+        $this->assertSame( <<<JSON
 [
     {
         "name": "default",
@@ -339,35 +365,36 @@ class JSONConfigProviderTest extends TestCase
     }
 ]
 JSON
-,
-                         \file_get_contents( __DIR__ . '/../../../data/config-tmp.json' ) );
-      \unlink( $newFile );
+            ,
+            \file_get_contents( __DIR__ . '/../../../data/config-tmp.json' ) );
+        \unlink( $newFile );
 
-   }
-   public function test_writeException1()
-   {
+    }
 
-      $rootFolder = Path::Combine( \sys_get_temp_dir(), 'Niirty.Config.Tests' );
-      if ( ! \is_dir( $rootFolder ) )
-      {
-         \mkdir( $rootFolder );
-      }
-      $configFile = $rootFolder . '/config.json';
-      if ( @\is_file( $configFile ) && \file_exists( $configFile ) )
-      {
-         \chmod( $configFile, 0700 );
-         \unlink( $configFile );
-      }
-      \touch( $configFile );
-      $config = $this->_provider->read();
-      $this->_provider->setFile( $configFile );
-      \chmod( $configFile, 0000 );
-      $this->expectException( ConfigProviderException::class );
-      $this->_provider->write( $config );
-      \chmod( $configFile, 0700 );
-      \unlink( $configFile );
+    public function test_writeException1()
+    {
 
-   }
+        $rootFolder = Path::Combine( \sys_get_temp_dir(), 'Niirty.Config.Tests' );
+        if ( !\is_dir( $rootFolder ) )
+        {
+            \mkdir( $rootFolder );
+        }
+        $configFile = $rootFolder . '/config.json';
+        if ( @\is_file( $configFile ) && \file_exists( $configFile ) )
+        {
+            \chmod( $configFile, 0700 );
+            \unlink( $configFile );
+        }
+        \touch( $configFile );
+        $config = $this->_provider->read();
+        $this->_provider->setFile( $configFile );
+        \chmod( $configFile, 0000 );
+        $this->expectException( ConfigProviderException::class );
+        $this->_provider->write( $config );
+        \chmod( $configFile, 0700 );
+        \unlink( $configFile );
+
+    }
 
 
 }

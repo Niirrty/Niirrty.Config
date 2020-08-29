@@ -1,55 +1,58 @@
 <?php
 /**
  * @author         Ni Irrty <niirrty+code@gmail.com>
- * @copyright  (c) 2017, Ni Irrty
+ * @copyright      © 2017-2020, Ni Irrty
  * @license        MIT
  * @since          2018-05-26
- * @version        0.1.0
+ * @version        0.3.0
  */
 
 
-declare( strict_types = 1 );
+declare( strict_types=1 );
 
 
 namespace Niirrty\Config\Exceptions;
-
 
 
 class ConfigProviderException extends ConfigException
 {
 
 
-   /** @type string The configuration provider name */
-   protected $_providerName;
+    /** @type string The configuration provider name */
+    protected $_providerName;
 
 
-   /**
-    * Init a new ConfigurationException instance.
-    */
-   public function __construct( string $providerName, ?string $message = null, ?\Throwable $previous = null )
-   {
+    /**
+     * Init a new ConfigurationException instance.
+     *
+     * @param string          $providerName
+     * @param string|null     $message
+     * @param \Throwable|null $previous
+     */
+    public function __construct( string $providerName, ?string $message = null, ?\Throwable $previous = null )
+    {
 
-      parent::__construct(
-         '"' . $providerName . '"Config provider error.' . self::appendMessage( $message ),
-         0,
-         $previous
-      );
+        parent::__construct(
+            '"' . $providerName . '"Config provider error.' . self::appendMessage( $message ),
+            0,
+            $previous
+        );
 
-      $this->_providerName = $providerName;
+        $this->_providerName = $providerName;
 
-   }
+    }
 
-   /**
-    * Gets the provider name.
-    *
-    * @return string
-    */
-   public function getProviderName() : string
-   {
+    /**
+     * Gets the provider name.
+     *
+     * @return string
+     */
+    public function getProviderName(): string
+    {
 
-      return $this->_providerName;
+        return $this->_providerName;
 
-   }
+    }
 
 
 }

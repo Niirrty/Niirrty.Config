@@ -1,14 +1,14 @@
 <?php
 /**
  * @author         Ni Irrty <niirrty+code@gmail.com>
- * @copyright  (c) 2017, Ni Irrty
+ * @copyright      © 2017-2020, Ni Irrty
  * @license        MIT
  * @since          2018-05-20
- * @version        0.1.0
+ * @version        0.3.0
  */
 
 
-declare( strict_types = 1 );
+declare( strict_types=1 );
 
 
 namespace Niirrty\Config;
@@ -25,465 +25,504 @@ class ConfigItem implements IConfigItem
 {
 
 
-   /**
-    * Implements ->getId(), ->getName() and ->getDescription()
-    */
-   use ConfigElementTrait;
+    /**
+     * Implements ->getId(), ->getName() and ->getDescription()
+     */
+    use ConfigElementTrait;
 
 
-   /** @type bool */
-   protected $_nullable;
+    /** @type bool */
+    protected $_nullable;
 
-   /** @type bool */
-   protected $_changed;
+    /** @type bool */
+    protected $_changed;
 
-   /** @type string */
-   protected $_type;
+    /** @type string */
+    protected $_type;
 
-   /** @type mixed */
-   protected $_value;
+    /** @type mixed */
+    protected $_value;
 
-   /** @type \Niirrty\Config\IConfigElementBase */
-   protected $_parent;
-
-
-   /**
-    * ConfigItem constructor.
-    *
-    * @param \Niirrty\Config\IConfigElementBase $parent      The item owning section
-    * @param string                             $name        The item name.
-    * @param null|string                        $description Optional item description
-    */
-   public function __construct(
-      IConfigElementBase $parent, string $name, ?string $description = null )
-   {
-
-      $this->_name         = $name;
-      $this->_description  = \trim( $description ?? '' );
-      $this->_nullable     = false;
-      $this->_parent       = $parent;
-
-      if ( '' === $this->_description )
-      {
-         $this->_description = null;
-      }
-
-   }
+    /** @type IConfigElementBase */
+    protected $_parent;
 
 
-   /**
-    * Returns all instance data as an associative array.
-    *
-    * The keys of the returned array are:
-    *
-    * name, description, type, nullable, value
-    *
-    * @return array
-    */
-   public function toArray() : array
-   {
+    /**
+     * ConfigItem constructor.
+     *
+     * @param IConfigElementBase $parent      The item owning section
+     * @param string             $name        The item name.
+     * @param null|string        $description Optional item description
+     */
+    public function __construct(
+        IConfigElementBase $parent, string $name, ?string $description = null )
+    {
 
-      return [
-         'name'         => $this->_name,
-         'description'  => $this->_description,
-         'type'         => $this->_type,
-         'nullable'     => $this->_nullable,
-         'value'        => $this->_value
-      ];
+        $this->_name = $name;
+        $this->_description = \trim( $description ?? '' );
+        $this->_nullable = false;
+        $this->_parent = $parent;
 
-   }
+        if ( '' === $this->_description )
+        {
+            $this->_description = null;
+        }
 
-   /**
-    * Gets the type name of the config item.
-    *
-    * @return string
-    */
-   public function getType() : string
-   {
+    }
 
-      return $this->_type;
 
-   }
+    /**
+     * Returns all instance data as an associative array.
+     *
+     * The keys of the returned array are:
+     *
+     * name, description, type, nullable, value
+     *
+     * @return array
+     */
+    public function toArray(): array
+    {
 
-   /**
-    * Gets if the config value is nullable.
-    *
-    * @return bool
-    */
-   public function isNullable() : bool
-   {
+        return [
+            'name'        => $this->_name,
+            'description' => $this->_description,
+            'type'        => $this->_type,
+            'nullable'    => $this->_nullable,
+            'value'       => $this->_value,
+        ];
 
-      return $this->_nullable;
+    }
 
-   }
+    /**
+     * Gets the type name of the config item.
+     *
+     * @return string
+     */
+    public function getType(): string
+    {
 
-   /**
-    * Gets the config value as string, or NULL.
-    *
-    * @return null|string
-    */
-   public function getStringValue() : ?string
-   {
+        return $this->_type;
 
-      if ( null === $this->_value )
-      {
-         return $this->_value;
-      }
+    }
 
-      switch ( $this->_type )
-      {
+    /**
+     * Gets if the config value is nullable.
+     *
+     * @return bool
+     */
+    public function isNullable(): bool
+    {
 
-         case 'bool':
-         case 'boolean':
-            return $this->_value ? 'true' : 'false';
+        return $this->_nullable;
 
-         case 'array':
-            return \json_encode( $this->_value );
+    }
 
-         case '\\DateTime':
-         case '\\DateTimeInterface':
-         case 'DateTime':
-         case 'DateTimeInterface':
-         case 'Niirrty\\Date\\DateTime':
-         case '\\Niirrty\\Date\\DateTime':
-            return $this->_value->format( 'Y-m-d H:i:s' );
+    /**
+     * Gets the config value as string, or NULL.
+     *
+     * @return null|string
+     */
+    public function getStringValue(): ?string
+    {
 
-         default:
-            return (string) $this->_value;
+        if ( null === $this->_value )
+        {
+            return $this->_value;
+        }
 
-      }
+        switch ( $this->_type )
+        {
 
-   }
+            case 'bool':
+            case 'boolean':
+                return $this->_value ? 'true' : 'false';
 
-   /**
-    * Gets the config value as int, or NULL if the value is null or not convertible to a integer.
-    *
-    * @return int|null
-    */
-   public function getIntValue() : ?int
-   {
+            case 'array':
+                return \json_encode( $this->_value );
 
-      try { return TypeTool::ConvertNative( $this->_value, Type::PHP_INTEGER ); }
-      catch ( \Throwable $ex ) { return null; }
-   }
+            case '\\DateTime':
+            case '\\DateTimeInterface':
+            case 'DateTime':
+            case 'DateTimeInterface':
+            case 'Niirrty\\Date\\DateTime':
+            case '\\Niirrty\\Date\\DateTime':
+                return $this->_value->format( 'Y-m-d H:i:s' );
 
-   /**
-    * Gets the config value as bool, or NULL if the value is null or not convertible to a boolean.
-    *
-    * @return bool|null
-    */
-   public function getBoolValue() : ?bool
-   {
+            default:
+                return (string) $this->_value;
 
-      try { return TypeTool::ConvertNative( $this->_value, Type::PHP_BOOLEAN ); }
-      catch ( \Throwable $ex ) { return null; }
+        }
 
-   }
+    }
 
-   /**
-    * Gets the config value as float, or NULL if the value is null or not convertible to a float.
-    *
-    * @return float|null
-    */
-   public function getFloatValue() : ?float
-   {
+    /**
+     * Gets the config value as int, or NULL if the value is null or not convertible to a integer.
+     *
+     * @return int|null
+     */
+    public function getIntValue(): ?int
+    {
 
-      try { return TypeTool::ConvertNative( $this->_value, Type::PHP_FLOAT ); }
-      catch ( \Throwable $ex ) { return null; }
+        try
+        {
+            return TypeTool::ConvertNative( $this->_value, Type::PHP_INTEGER );
+        }
+        catch ( \Throwable $ex )
+        {
+            return null;
+        }
+    }
 
-   }
+    /**
+     * Gets the config value as bool, or NULL if the value is null or not convertible to a boolean.
+     *
+     * @return bool|null
+     */
+    public function getBoolValue(): ?bool
+    {
 
-   /**
-    * Gets the value with mixed type.
-    *
-    * @return mixed
-    */
-   public function getValue()
-   {
+        try
+        {
+            return TypeTool::ConvertNative( $this->_value, Type::PHP_BOOLEAN );
+        }
+        catch ( \Throwable $ex )
+        {
+            return null;
+        }
 
-      return $this->_value;
+    }
 
-   }
+    /**
+     * Gets the config value as float, or NULL if the value is null or not convertible to a float.
+     *
+     * @return float|null
+     */
+    public function getFloatValue(): ?float
+    {
 
-   /**
-    * Gets the parent section element.
-    *
-    * @return \Niirrty\Config\IConfigElementBase
-    */
-   public function getParent() : IConfigElementBase
-   {
+        try
+        {
+            return TypeTool::ConvertNative( $this->_value, Type::PHP_FLOAT );
+        }
+        catch ( \Throwable $ex )
+        {
+            return null;
+        }
 
-      return $this->_parent;
+    }
 
-   }
+    /**
+     * Gets the value with mixed type.
+     *
+     * @return mixed
+     */
+    public function getValue()
+    {
 
-   /**
-    * Sets the parent section element.
-    *
-    * @param \Niirrty\Config\IConfigElementBase $parentSection
-    * @return $this
-    */
-   public function setParent( IConfigElementBase $parentSection )
-   {
+        return $this->_value;
 
-      $this->_parent = $parentSection;
-      return $this;
+    }
 
-   }
+    /**
+     * Gets the parent section element.
+     *
+     * @return IConfigElementBase
+     */
+    public function getParent(): IConfigElementBase
+    {
 
-   /**
-    * Sets a new value.
-    *
-    * @param $value
-    * @return \Niirrty\Config\IConfigItem
-    * @throws \Niirrty\ArgumentException if the config value is invalid
-    */
-   public function setValue( $value )
-   {
+        return $this->_parent;
 
-      if ( $this->_value === $value )
-      {
-         return $this;
-      }
+    }
 
-      $this->_changed = true;
+    /**
+     * Sets the parent section element.
+     *
+     * @param IConfigElementBase $parentSection
+     *
+     * @return $this
+     */
+    public function setParent( IConfigElementBase $parentSection )
+    {
 
-      if ( null === $value )
-      {
+        $this->_parent = $parentSection;
 
-         if ( ! $this->_nullable )
-         {
-            throw new ArgumentException(
-               'value',
-               $value,
-               "Null is not a supported value for config item '{$this->_name}'!"
-            );
-         }
+        return $this;
 
-         $this->_value = $value;
+    }
 
-         return $this;
+    /**
+     * Sets a new value.
+     *
+     * @param $value
+     *
+     * @return IConfigItem
+     * @throws ArgumentException if the config value is invalid
+     */
+    public function setValue( $value )
+    {
 
-      }
-
-      switch ( $this->_type )
-      {
-
-         case Type::PHP_STRING:
-            if ( ! TypeTool::IsStringConvertible( $value, $strOut ) )
-            {
-               throw new ArgumentException(
-                  'value',
-                  $value,
-                  "The new value for config item '{$this->_name}' is not convertible to a string!"
-               );
-            }
-            $this->_value = $strOut;
+        if ( $this->_value === $value )
+        {
             return $this;
+        }
 
-         case Type::PHP_BOOLEAN:
-         case 'boolean':
-            if ( ! TypeTool::IsBoolConvertible( $value, $boolOut ) )
-            {
-               throw new ArgumentException(
-                  'value',
-                  $value,
-                  "The new value for config item '{$this->_name}' is not convertible to a boolean!"
-               );
-            }
-            $this->_value = $boolOut;
-            return $this;
+        $this->_changed = true;
 
-         case Type::PHP_ARRAY:
-            if ( \is_array( $value ) )
-            {
-               $this->_value = $value;
-               return $this;
-            }
-            if ( \is_iterable( $value ) )
-            {
-               $this->_value = \iterator_to_array( $value );
-               return $this;
-            }
-            if ( $value instanceof IArrayable )
-            {
-               $this->_value = $value->toArray();
-               return $this;
-            }
-            if ( \is_string( $value ) )
-            {
-               $val = @\json_decode( $value, true );
-               if ( \is_array( $val ) )
-               {
-                  $this->_value = $val;
-                  return $this;
-               }
-               $val = @\unserialize( $value );
-               if ( \is_array( $val ) )
-               {
-                  $this->_value = $val;
-                  return $this;
-               }
-            }
-            throw new ArgumentException(
-               'value',
-               $value,
-               "The new value for config item '{$this->_name}' is not convertible to a array!"
-            );
+        if ( null === $value )
+        {
 
-         case Type::PHP_INTEGER:
-         case 'integer':
-            if ( ! TypeTool::IsInteger( $value ) )
+            if ( !$this->_nullable )
             {
-               throw new ArgumentException(
-                  'value',
-                  $value,
-                  "The new value for config item '{$this->_name}' is not convertible to a integer!"
-               );
+                throw new ArgumentException(
+                    'value',
+                    $value,
+                    "Null is not a supported value for config item '{$this->_name}'!"
+                );
             }
-            $this->_value = (int) $value;
-            return $this;
 
-         case Type::PHP_FLOAT:
-         case 'double':
-            if ( ! TypeTool::IsDecimal( $value, true ) )
-            {
-               throw new ArgumentException(
-                  'value',
-                  $value,
-                  "The new value for config item '{$this->_name}' is not convertible to a integer!"
-               );
-            }
-            $this->_value = (float) \str_replace( ',', '.', $value );
-            return $this;
-
-         case 'DateTime':
-         case 'DateTimeInterface':
-         case '\\DateTimeInterface':
-         case 'Niirrty\\DateTime':
-         case '\\Niirrty\\DateTime':
-         case '\\DateTime':
-            if ( false === ( $dt = DateTime::Parse( $value ) ) )
-            {
-               throw new ArgumentException(
-                  'value',
-                  $value,
-                  "The new value for config item '{$this->_name}' is not convertible to a date time!"
-               );
-            }
-            $this->_value = $dt;
-            return $this;
-
-         default:
             $this->_value = $value;
+
             return $this;
 
-      }
+        }
 
-   }
+        switch ( $this->_type )
+        {
 
-   /**
-    * Gets if the value is marked as changed.
-    *
-    * @return bool
-    */
-   public function isChanged() : bool
-   {
+            case Type::PHP_STRING:
+                if ( !TypeTool::IsStringConvertible( $value, $strOut ) )
+                {
+                    throw new ArgumentException(
+                        'value',
+                        $value,
+                        "The new value for config item '{$this->_name}' is not convertible to a string!"
+                    );
+                }
+                $this->_value = $strOut;
 
-      return $this->_changed;
+                return $this;
 
-   }
+            case Type::PHP_BOOLEAN:
+            case 'boolean':
+                if ( !TypeTool::IsBoolConvertible( $value, $boolOut ) )
+                {
+                    throw new ArgumentException(
+                        'value',
+                        $value,
+                        "The new value for config item '{$this->_name}' is not convertible to a boolean!"
+                    );
+                }
+                $this->_value = $boolOut;
 
-   /**
-    * Sets the state if the value is marked as changed.
-    *
-    * @param bool $changed
-    * @return \Niirrty\Config\IConfigItem
-    */
-   public function setIsChanged( bool $changed )
-   {
+                return $this;
 
-      $this->_changed = $changed;
-      return $this;
+            case Type::PHP_ARRAY:
+                if ( \is_array( $value ) )
+                {
+                    $this->_value = $value;
 
-   }
+                    return $this;
+                }
+                if ( \is_iterable( $value ) )
+                {
+                    $this->_value = \iterator_to_array( $value );
 
-   /**
-    * Sets if the item is nullable.
-    *
-    * @param bool $nullable
-    * @return \Niirrty\Config\IConfigItem
-    */
-   public function setIsNullable( bool $nullable )
-   {
+                    return $this;
+                }
+                if ( $value instanceof IArrayable )
+                {
+                    $this->_value = $value->toArray();
 
-      $this->_nullable = $nullable;
-      $this->_changed = true;
-      return $this;
+                    return $this;
+                }
+                if ( \is_string( $value ) )
+                {
+                    $val = @\json_decode( $value, true );
+                    if ( \is_array( $val ) )
+                    {
+                        $this->_value = $val;
 
-   }
+                        return $this;
+                    }
+                    $val = @\unserialize( $value );
+                    if ( \is_array( $val ) )
+                    {
+                        $this->_value = $val;
 
-   /**
-    * Sets the accepted item value type.
-    *
-    * @param string $typeName
-    * @return \Niirrty\Config\IConfigItem
-    */
-   public function setType( string $typeName )
-   {
+                        return $this;
+                    }
+                }
+                throw new ArgumentException(
+                    'value',
+                    $value,
+                    "The new value for config item '{$this->_name}' is not convertible to a array!"
+                );
 
-      $this->_type = $typeName;
-      $this->_changed = true;
-      return $this;
+            case Type::PHP_INTEGER:
+            case 'integer':
+                if ( !TypeTool::IsInteger( $value ) )
+                {
+                    throw new ArgumentException(
+                        'value',
+                        $value,
+                        "The new value for config item '{$this->_name}' is not convertible to a integer!"
+                    );
+                }
+                $this->_value = (int) $value;
 
-   }
+                return $this;
 
-   /**
-    * Gets the string representation of the instance data for implementing class.
-    *
-    * @return string
-    */
-   public function __toString()
-   {
+            case Type::PHP_FLOAT:
+            case 'double':
+                if ( !TypeTool::IsDecimal( $value, true ) )
+                {
+                    throw new ArgumentException(
+                        'value',
+                        $value,
+                        "The new value for config item '{$this->_name}' is not convertible to a integer!"
+                    );
+                }
+                $this->_value = (float) \str_replace( ',', '.', $value );
 
-      return $this->getStringValue() ?? '';
+                return $this;
 
-   }
+            case 'DateTime':
+            case 'DateTimeInterface':
+            case '\\DateTimeInterface':
+            case 'Niirrty\\DateTime':
+            case '\\Niirrty\\DateTime':
+            case '\\DateTime':
+                if ( false === ( $dt = DateTime::Parse( $value ) ) )
+                {
+                    throw new ArgumentException(
+                        'value',
+                        $value,
+                        "The new value for config item '{$this->_name}' is not convertible to a date time!"
+                    );
+                }
+                $this->_value = $dt;
 
-   public function __clone()
-   {
+                return $this;
 
-      $this->_value = clone $this->_value;
+            default:
+                $this->_value = $value;
 
-   }
+                return $this;
+
+        }
+
+    }
+
+    /**
+     * Gets if the value is marked as changed.
+     *
+     * @return bool
+     */
+    public function isChanged(): bool
+    {
+
+        return $this->_changed;
+
+    }
+
+    /**
+     * Sets the state if the value is marked as changed.
+     *
+     * @param bool $changed
+     *
+     * @return IConfigItem
+     */
+    public function setIsChanged( bool $changed )
+    {
+
+        $this->_changed = $changed;
+
+        return $this;
+
+    }
+
+    /**
+     * Sets if the item is nullable.
+     *
+     * @param bool $nullable
+     *
+     * @return IConfigItem
+     */
+    public function setIsNullable( bool $nullable )
+    {
+
+        $this->_nullable = $nullable;
+        $this->_changed = true;
+
+        return $this;
+
+    }
+
+    /**
+     * Sets the accepted item value type.
+     *
+     * @param string $typeName
+     *
+     * @return IConfigItem
+     */
+    public function setType( string $typeName )
+    {
+
+        $this->_type = $typeName;
+        $this->_changed = true;
+
+        return $this;
+
+    }
+
+    /**
+     * Gets the string representation of the instance data for implementing class.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+
+        return $this->getStringValue() ?? '';
+
+    }
+
+    public function __clone()
+    {
+
+        $this->_value = clone $this->_value;
+
+    }
 
 
-   /**
-    * Creates a new config item for defined section and register it inside the section.
-    *
-    * @param \Niirrty\Config\IConfigSection     $parentSection
-    * @param string                             $name
-    * @param string                             $type
-    * @param                                    $value
-    * @param bool                               $nullable
-    * @return \Niirrty\Config\IConfigItem
-    */
-   public static function Create(
-      IConfigSection $parentSection, string $name, string $type, $value, bool $nullable = false )
-      : IConfigItem
-   {
+    /**
+     * Creates a new config item for defined section and register it inside the section.
+     *
+     * @param IConfigSection                     $parentSection
+     * @param string                             $name
+     * @param string                             $type
+     * @param                                    $value
+     * @param bool                               $nullable
+     *
+     * @return IConfigItem
+     * @throws ArgumentException
+     */
+    public static function Create(
+        IConfigSection $parentSection, string $name, string $type, $value, bool $nullable = false ): IConfigItem
+    {
 
-      $item = ( new ConfigItem( $parentSection, $name ) )
-         ->setType( $type )
-         ->setIsNullable( $nullable )
-         ->setValue( $value )
-         ->setIsChanged( false );
+        $item = ( new ConfigItem( $parentSection, $name ) )
+            ->setType( $type )
+            ->setIsNullable( $nullable )
+            ->setValue( $value )
+            ->setIsChanged( false );
 
-      $parentSection->setItem( $item );
+        $parentSection->setItem( $item );
 
-      return $item;
+        return $item;
 
-   }
+    }
 
 
 }

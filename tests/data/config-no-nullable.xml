@@ -2,26 +2,28 @@
 
 <Config>
 
-   <Section name="default">
+    <Section name="default">
 
-      <Description>A optional section description…</Description>
-      <Item name="foo" type="string" nullable="¿¡…¡¿"
-            value="¿?¿? ¡!¡! - Foo Bar - !¡!¡ ?¿?¿"
-            description="A config item description…"/>
-      <Item name="Blub" type="string" nullable="false">
-         <Value>This is also a value, but
-with a new line!</Value>
-         <Description>A longer description for the configuration item,
-with a line break, huuhh :-)</Description>
-      </Item>
-      <Item name="Blubber" type="string" nullable="true"/>
-      <Item name="Abc" type="bool" nullable="false" value="1"/>
-      <Item name="Def" type="int" nullable="false" value="-123"/>
-      <Item name="Ghi" type="float" nullable="false" value="12.3"/>
-      <Item name="Jkl" type="array" nullable="false">
-         <Value>[ "Foo", "Bar" ]</Value>
-      </Item>
-      <Item name="Mno" type="\DateTime" nullable="false" value="2017-04-14 12:47:25"/>
-   </Section>
+        <Description>A optional section description…</Description>
+        <Item name="foo" type="string" nullable="¿¡…¡¿"
+              value="¿?¿? ¡!¡! - Foo Bar - !¡!¡ ?¿?¿"
+              description="A config item description…"/>
+        <Item name="Blub" type="string" nullable="false">
+            <Value>This is also a value, but
+                with a new line!
+            </Value>
+            <Description>A longer description for the configuration item,
+                with a line break, huuhh :-)
+            </Description>
+        </Item>
+        <Item name="Blubber" type="string" nullable="true"/>
+        <Item name="Abc" type="bool" nullable="false" value="1"/>
+        <Item name="Def" type="int" nullable="false" value="-123"/>
+        <Item name="Ghi" type="float" nullable="false" value="12.3"/>
+        <Item name="Jkl" type="array" nullable="false">
+            <Value>[ "Foo", "Bar" ]</Value>
+        </Item>
+        <Item name="Mno" type="\DateTime" nullable="false" value="2017-04-14 12:47:25"/>
+    </Section>
 
 </Config>

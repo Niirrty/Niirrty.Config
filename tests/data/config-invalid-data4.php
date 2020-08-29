@@ -10,30 +10,30 @@
 
 return [
 
-   [
-      'name'         => 'default',
-      'description'  => 'A optional section description…',
-      'items'        => [
-         [
-            'name'         => 'foo',
-            'description'  => 'A optional item description…',
-            'nullable'     => false,
-            'type'         => 'bool',
-            'value'        => new stdClass()
-         ],
-         [
-            'name'         => 'bar',
-            'nullable'     => true,
-            'type'         => 'int',
-            'value'        => 1234
-         ],
-         [
-            'name'         => 'baz',
-            'nullable'     => true,
-            'type'         => 'string'
-         ]
-      ]
-   ]
+    [
+        'name'        => 'default',
+        'description' => 'A optional section description…',
+        'items'       => [
+            [
+                'name'        => 'foo',
+                'description' => 'A optional item description…',
+                'nullable'    => false,
+                'type'        => 'bool',
+                'value'       => new stdClass(),
+            ],
+            [
+                'name'     => 'bar',
+                'nullable' => true,
+                'type'     => 'int',
+                'value'    => 1234,
+            ],
+            [
+                'name'     => 'baz',
+                'nullable' => true,
+                'type'     => 'string',
+            ],
+        ],
+    ],
 
 ];
 

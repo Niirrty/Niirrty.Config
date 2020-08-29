@@ -2,46 +2,48 @@
 
 <Config>
 
-   <Section name="default">
+    <Section name="default">
 
-      <!-- Optional section description -->
-      <Description/>
+        <!-- Optional section description -->
+        <Description/>
 
-      <!--
-      A config item with id 1, name PageName and a not nullable value
-      of type string, and a optional description.
-      -->
-      <Item name="PageName"
-            type="string" nullable="false"
-            value="¿?¿? ¡!¡! - Foo Bar - !¡!¡ ?¿?¿"
-            description="A config item description…"/>
+        <!--
+        A config item with id 1, name PageName and a not nullable value
+        of type string, and a optional description.
+        -->
+        <Item name="PageName"
+              type="string" nullable="false"
+              value="¿?¿? ¡!¡! - Foo Bar - !¡!¡ ?¿?¿"
+              description="A config item description…"/>
 
-      <Item name="Blub" type="string" nullable="false">
-         <Value>This is also a value, but
-with a new line!</Value>
-         <Description>A longer description for the configuration item,
-with a line break, huuhh :-)</Description>
-      </Item>
+        <Item name="Blub" type="string" nullable="false">
+            <Value>This is also a value, but
+                with a new line!
+            </Value>
+            <Description>A longer description for the configuration item,
+                with a line break, huuhh :-)
+            </Description>
+        </Item>
 
-      <!--
-      If the value is null and the item nullable, so no value should be defined.
-      -->
-      <Item name="Blubber" type="string" nullable="true"/>
+        <!--
+        If the value is null and the item nullable, so no value should be defined.
+        -->
+        <Item name="Blubber" type="string" nullable="true"/>
 
-      <Item name="Abc" type="bool" nullable="false" value="1"/>
+        <Item name="Abc" type="bool" nullable="false" value="1"/>
 
-      <Item name="Def" type="int" nullable="false" value="-123"/>
+        <Item name="Def" type="int" nullable="false" value="-123"/>
 
-      <Item name="Ghi" type="float" nullable="false" value="12.3"/>
+        <Item name="Ghi" type="float" nullable="false" value="12.3"/>
 
-      <!-- Array value tyes are stores as json -->
-      <Item name="Jkl" type="array" nullable="false">
-         <Value>[ "Foo", "Bar" ]</Value>
-      </Item>
+        <!-- Array value tyes are stores as json -->
+        <Item name="Jkl" type="array" nullable="false">
+            <Value>[ "Foo", "Bar" ]</Value>
+        </Item>
 
-      <!-- Array value tyes are stores as json -->
-      <Item name="Mno" type="\DateTime" nullable="false" value="2017-04-14 12:47:25"/>
+        <!-- Array value tyes are stores as json -->
+        <Item name="Mno" type="\DateTime" nullable="false" value="2017-04-14 12:47:25"/>
 
-   </Section>
+    </Section>
 
 </Config>

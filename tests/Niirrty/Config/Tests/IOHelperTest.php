@@ -18,41 +18,48 @@ use PHPUnit\Framework\TestCase;
 
 class IOHelperTest extends TestCase
 {
-   public function test_fOpenException1()
-   {
 
-      $this->expectException( FileAccessException::class );
-      IOHelper::fOpen( __DIR__ . '/sdsd.php', 'rb' );
 
-   }
-   public function test_fOpenException3()
-   {
+    public function test_fOpenException1()
+    {
 
-      $this->expectException( FileAccessException::class );
-      IOHelper::fOpen( __DIR__ . '/etc/sdsd.php', 'a+b' );
+        $this->expectException( FileAccessException::class );
+        IOHelper::fOpen( __DIR__ . '/sdsd.php', 'rb' );
 
-   }
-   public function test_fOpenException2()
-   {
+    }
 
-      $this->expectException( FileAccessException::class );
-      IOHelper::fOpen( __DIR__ . '/etc/sdsd.php', 'wb' );
+    public function test_fOpenException3()
+    {
 
-   }
-   public function test_fileGetContentsException()
-   {
+        $this->expectException( FileAccessException::class );
+        IOHelper::fOpen( __DIR__ . '/etc/sdsd.php', 'a+b' );
 
-      $this->expectException( FileAccessException::class );
-      IOHelper::fileGetContents( __DIR__ . '/sdsd.php' );
+    }
 
-   }
-   public function test_fileSetContentsException()
-   {
+    public function test_fOpenException2()
+    {
 
-      $this->expectException( FileAccessException::class );
-      IOHelper::fileSetContents( __DIR__ . '/etc/sdsd.php', '<?php phpinfo(); ?>' );
+        $this->expectException( FileAccessException::class );
+        IOHelper::fOpen( __DIR__ . '/etc/sdsd.php', 'wb' );
 
-   }
+    }
+
+    public function test_fileGetContentsException()
+    {
+
+        $this->expectException( FileAccessException::class );
+        IOHelper::fileGetContents( __DIR__ . '/sdsd.php' );
+
+    }
+
+    public function test_fileSetContentsException()
+    {
+
+        $this->expectException( FileAccessException::class );
+        IOHelper::fileSetContents( __DIR__ . '/etc/sdsd.php', '<?php phpinfo(); ?>' );
+
+    }
+
 
 }
 

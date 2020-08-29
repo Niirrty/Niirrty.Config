@@ -10,29 +10,29 @@
 
 return [
 
-   [
-      'name'         => 'default',
-      'description'  => 'A optional section description…',
-      'items'        => [
-         [
-            'description'  => 'A optional item description…',
-            'nullable'     => false,
-            'type'         => 'bool',
-            'value'        => false
-         ],
-         [
-            'name'         => 'bar',
-            'nullable'     => true,
-            'type'         => 'int',
-            'value'        => 1234
-         ],
-         [
-            'name'         => 'baz',
-            'nullable'     => true,
-            'type'         => 'string'
-         ]
-      ]
-   ]
+    [
+        'name'        => 'default',
+        'description' => 'A optional section description…',
+        'items'       => [
+            [
+                'description' => 'A optional item description…',
+                'nullable'    => false,
+                'type'        => 'bool',
+                'value'       => false,
+            ],
+            [
+                'name'     => 'bar',
+                'nullable' => true,
+                'type'     => 'int',
+                'value'    => 1234,
+            ],
+            [
+                'name'     => 'baz',
+                'nullable' => true,
+                'type'     => 'string',
+            ],
+        ],
+    ],
 
 ];
 
