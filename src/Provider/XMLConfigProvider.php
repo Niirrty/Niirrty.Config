@@ -1,10 +1,10 @@
 <?php
 /**
  * @author         Ni Irrty <niirrty+code@gmail.com>
- * @copyright      © 2017-2020, Ni Irrty
+ * @copyright      © 2017-2021, Ni Irrty
  * @license        MIT
  * @since          2018-05-25
- * @version        0.3.0
+ * @version        0.4.0
  */
 
 
@@ -14,13 +14,10 @@ declare( strict_types=1 );
 namespace Niirrty\Config\Provider;
 
 
-use Niirrty\
-{ArgumentException, TypeTool, XmlAttributeHelper};
-use Niirrty\Config\
-{ConfigItem, ConfigSection, Configuration, IConfiguration};
-use Niirrty\Config\Exceptions\
-{ConfigParseException, ConfigProviderException, ConfigProviderOptionException};
-use Niirrty\IO\Vfs\VfsManager;
+use \Niirrty\{ArgumentException, TypeTool, XmlAttributeHelper};
+use \Niirrty\Config\{ConfigItem, ConfigSection, Configuration, IConfiguration};
+use \Niirrty\Config\Exceptions\{ConfigParseException, ConfigProviderException, ConfigProviderOptionException};
+use \Niirrty\IO\Vfs\VfsManager;
 
 
 class XMLConfigProvider extends AbstractFileConfigProvider implements IConfigProvider
@@ -35,10 +32,9 @@ class XMLConfigProvider extends AbstractFileConfigProvider implements IConfigPro
     public function __construct( string $name = 'XML' )
     {
 
-        parent::_construct( empty( $name ) ? 'XML' : $name, [ 'xml' ] );
+        parent::__construct( empty( $name ) ? 'XML' : $name, [ 'xml' ] );
 
     }
-
 
     /**
      * Reads all available configuration items from the source.
@@ -66,17 +62,15 @@ class XMLConfigProvider extends AbstractFileConfigProvider implements IConfigPro
             $sectionNames = null;
         }
 
-        $xmlDoc = null;
-
         try
         {
-            $xmlDoc = \simplexml_load_file( $this->_options[ 'file' ] );
+            $xmlDoc = \simplexml_load_file( $this->options[ 'file' ] );
         }
         catch ( \Throwable $ex )
         {
             throw new ConfigProviderException(
-                $this->_name,
-                'Unable to load config data from file "' . $this->_options[ 'file' ] . '"!',
+                $this->name,
+                'Unable to load config data from file "' . $this->options[ 'file' ] . '"!',
                 $ex
             );
         }
@@ -84,9 +78,9 @@ class XMLConfigProvider extends AbstractFileConfigProvider implements IConfigPro
         if ( !( $xmlDoc instanceof \SimpleXMLElement ) )
         {
             throw new ConfigProviderException(
-                $this->_name,
+                $this->name,
                 'Unable to load config data from file "'
-                . $this->_options[ 'file' ]
+                . $this->options[ 'file' ]
                 . '" if the file is not valid XML or not readable!'
             );
         }
@@ -94,9 +88,9 @@ class XMLConfigProvider extends AbstractFileConfigProvider implements IConfigPro
         if ( !isset( $xmlDoc->Section ) )
         {
             throw new ConfigProviderException(
-                $this->_name,
+                $this->name,
                 'Unable to load config data from file "'
-                . $this->_options[ 'file' ]
+                . $this->options[ 'file' ]
                 . '" if the XML not defines the required Section element(s)!'
             );
         }
@@ -107,7 +101,7 @@ class XMLConfigProvider extends AbstractFileConfigProvider implements IConfigPro
             if ( empty( $sectionName ) )
             {
                 throw new ConfigParseException(
-                    $this->_name,
+                    $this->name,
                     'Invalid config section, a section must have a name.'
                 );
             }
@@ -129,7 +123,7 @@ class XMLConfigProvider extends AbstractFileConfigProvider implements IConfigPro
                     if ( empty( $itemName ) )
                     {
                         throw new ConfigParseException(
-                            $this->_name,
+                            $this->name,
                             'Invalid config item in section "' . $sectionName . '", missing a item name.'
                         );
                     }
@@ -155,7 +149,7 @@ class XMLConfigProvider extends AbstractFileConfigProvider implements IConfigPro
                             if ( !$nullable )
                             {
                                 throw new ConfigParseException(
-                                    $this->_name,
+                                    $this->name,
                                     'Invalid config item "'
                                     . $itemName
                                     . '" in section "'
@@ -174,7 +168,7 @@ class XMLConfigProvider extends AbstractFileConfigProvider implements IConfigPro
                             catch ( \Throwable $ex )
                             {
                                 throw new ConfigParseException(
-                                    $this->_name,
+                                    $this->name,
                                     'Invalid config item "'
                                     . $itemName
                                     . '" value in section "'
@@ -194,7 +188,7 @@ class XMLConfigProvider extends AbstractFileConfigProvider implements IConfigPro
                         catch ( \Throwable $ex )
                         {
                             throw new ConfigParseException(
-                                $this->_name,
+                                $this->name,
                                 'Invalid config item "'
                                 . $itemName
                                 . '" value in section "'
@@ -224,15 +218,15 @@ class XMLConfigProvider extends AbstractFileConfigProvider implements IConfigPro
      * @return XMLConfigProvider
      * @throws ConfigProviderException
      */
-    public function write( IConfiguration $config )
+    public function write( IConfiguration $config ) : XMLConfigProvider
     {
 
         // If the file is not writable trigger a exception
-        if ( $this->_fileExists && !\is_writable( $this->_options[ 'file' ] ) )
+        if ( $this->_fileExists && !\is_writable( $this->options[ 'file' ] ) )
         {
             throw new ConfigProviderException(
-                $this->_name,
-                'Can not write to config file "' . $this->_options[ 'file' ] . '" if the file is not writable!'
+                $this->name,
+                'Can not write to config file "' . $this->options[ 'file' ] . '" if the file is not writable!'
             );
         }
 
@@ -240,13 +234,13 @@ class XMLConfigProvider extends AbstractFileConfigProvider implements IConfigPro
 
         try
         {
-            $xmlWriter->openURI( $this->_options[ 'file' ] );
+            $xmlWriter->openURI( $this->options[ 'file' ] );
         }
         catch ( \Throwable $ex )
         {
             throw new ConfigProviderException(
-                $this->_name,
-                'Can not write to config file "' . $this->_options[ 'file' ] . '"!',
+                $this->name,
+                'Can not write to config file "' . $this->options[ 'file' ] . '"!',
                 $ex
             );
         }
@@ -317,20 +311,15 @@ class XMLConfigProvider extends AbstractFileConfigProvider implements IConfigPro
      * @param string $name  The option name.
      * @param mixed  $value The option value.
      */
-    protected function validateOption( string $name, $value )
-    {
-
-        return;
-
-    }
+    protected function validateOption( string $name, mixed $value ) { }
 
     /**
      * Init a new XML config provider.
      *
-     * @param string     $file       The path of the XML config file.
-     * @param array      $extensions Allowed XML file name extensions.
-     * @param string     $name       The name of the XML provider.
-     * @param VfsManager $vfsManager Optional VFS Manager to handle VFS paths
+     * @param string          $file       The path of the XML config file.
+     * @param array           $extensions Allowed XML file name extensions.
+     * @param string          $name       The name of the XML provider.
+     * @param VfsManager|null $vfsManager Optional VFS Manager to handle VFS paths
      *
      * @return XMLConfigProvider
      * @throws ConfigProviderOptionException

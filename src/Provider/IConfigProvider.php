@@ -1,10 +1,10 @@
 <?php
 /**
  * @author         Ni Irrty <niirrty+code@gmail.com>
- * @copyright      © 2017-2020, Ni Irrty
+ * @copyright      © 2017-2021, Ni Irrty
  * @license        MIT
  * @since          2018-05-19
- * @version        0.3.0
+ * @version        0.4.0
  */
 
 
@@ -14,10 +14,8 @@ declare( strict_types=1 );
 namespace Niirrty\Config\Provider;
 
 
-use Niirrty\Config\Exceptions\ConfigParseException;
-use Niirrty\Config\Exceptions\ConfigProviderException;
-use Niirrty\Config\Exceptions\ConfigProviderOptionException;
-use Niirrty\Config\IConfiguration;
+use \Niirrty\Config\Exceptions\{ConfigParseException, ConfigProviderException, ConfigProviderOptionException};
+use \Niirrty\Config\IConfiguration;
 
 
 /**
@@ -59,7 +57,7 @@ interface IConfigProvider
      *
      * @return mixed
      */
-    public function getOption( string $name );
+    public function getOption( string $name ): mixed;
 
     /**
      * Gets the names of all current defined options.
@@ -73,11 +71,10 @@ interface IConfigProvider
      *
      * @param string $name
      * @param mixed  $value
-     *
-     * @return mixed
+     * @return IConfigProvider
      * @throws ConfigProviderOptionException
      */
-    public function setOption( string $name, $value );
+    public function setOption( string $name, mixed $value ): IConfigProvider;
 
     /**
      * Gets if a options with defined name exists.
@@ -107,7 +104,7 @@ interface IConfigProvider
      * @return mixed
      * @throws ConfigProviderException
      */
-    public function write( IConfiguration $config );
+    public function write( IConfiguration $config ) : IConfigProvider;
 
 
 }

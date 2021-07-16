@@ -1,10 +1,10 @@
 <?php
 /**
  * @author         Ni Irrty <niirrty+code@gmail.com>
- * @copyright      © 2017-2020, Ni Irrty
+ * @copyright      © 2017-2021, Ni Irrty
  * @license        MIT
  * @since          2018-05-20
- * @version        0.3.0
+ * @version        0.4.0
  */
 
 
@@ -14,7 +14,7 @@ declare( strict_types=1 );
 namespace Niirrty\Config;
 
 
-use Niirrty\IArrayable;
+use \Niirrty\IArrayable;
 
 
 /**
@@ -32,9 +32,9 @@ interface IConfigSection
      *
      * @param IConfigItem $item
      *
-     * @return mixed
+     * @return IConfigSection
      */
-    public function setItem( IConfigItem $item );
+    public function setItem( IConfigItem $item ): IConfigSection;
 
     /**
      * Sets the value of a already defined config item.
@@ -42,9 +42,9 @@ interface IConfigSection
      * @param string $name  The name (string) of the config item
      * @param mixed  $value The config value.
      *
-     * @return mixed
+     * @return IConfigSection
      */
-    public function setValue( string $name, $value );
+    public function setValue( string $name, mixed $value ): IConfigSection;
 
     /**
      * Gets the config item for defined key, or null if the key is not defined.
@@ -62,7 +62,7 @@ interface IConfigSection
      *
      * @return mixed
      */
-    public function getValue( string $name );
+    public function getValue( string $name ): mixed;
 
     /**
      * Gets if some of the items is changed.
@@ -76,9 +76,9 @@ interface IConfigSection
      *
      * @param bool $isChanged
      *
-     * @return mixed
+     * @return IConfigSection
      */
-    public function setIsChanged( bool $isChanged );
+    public function setIsChanged( bool $isChanged ): IConfigSection;
 
     /**
      * Gets if a config item with defined name already exists.

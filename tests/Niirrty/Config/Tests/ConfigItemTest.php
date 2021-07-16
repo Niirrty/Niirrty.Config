@@ -64,7 +64,7 @@ class ConfigItemTest extends TestCase
     private $_itemOther;
 
 
-    public function setUp()
+    public function setUp() : void
     {
 
         $section = new ConfigSection( 'default' );

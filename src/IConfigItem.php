@@ -1,10 +1,10 @@
 <?php
 /**
  * @author         Ni Irrty <niirrty+code@gmail.com>
- * @copyright      © 2017-2020, Ni Irrty
+ * @copyright      © 2017-2021, Ni Irrty
  * @license        MIT
  * @since          2018-05-19
- * @version        0.3.0
+ * @version        0.4.0
  */
 
 
@@ -77,7 +77,7 @@ interface IConfigItem extends IConfigElementBase, IStringable, IArrayable
      *
      * @return mixed
      */
-    public function getValue();
+    public function getValue(): mixed;
 
     /**
      * Gets the parent section element.
@@ -90,10 +90,9 @@ interface IConfigItem extends IConfigElementBase, IStringable, IArrayable
      * Sets the parent section element.
      *
      * @param IConfigElementBase $parentSection
-     *
-     * @return mixed
+     * @return IConfigItem
      */
-    public function setParent( IConfigElementBase $parentSection );
+    public function setParent( IConfigElementBase $parentSection ): IConfigItem;
 
     /**
      * Sets a new value.
@@ -103,7 +102,7 @@ interface IConfigItem extends IConfigElementBase, IStringable, IArrayable
      * @return IConfigItem
      * @throws ArgumentException if the config value is invalid
      */
-    public function setValue( $value );
+    public function setValue( mixed $value ): IConfigItem;
 
     /**
      * Sets if the item is nullable.
@@ -112,7 +111,7 @@ interface IConfigItem extends IConfigElementBase, IStringable, IArrayable
      *
      * @return IConfigItem
      */
-    public function setIsNullable( bool $nullable );
+    public function setIsNullable( bool $nullable ): IConfigItem;
 
     /**
      * Sets the accepted item value type.
@@ -121,7 +120,7 @@ interface IConfigItem extends IConfigElementBase, IStringable, IArrayable
      *
      * @return IConfigItem
      */
-    public function setType( string $typeName );
+    public function setType( string $typeName ): IConfigItem;
 
     /**
      * Gets if the value is marked as changed.
@@ -137,7 +136,7 @@ interface IConfigItem extends IConfigElementBase, IStringable, IArrayable
      *
      * @return IConfigItem
      */
-    public function setIsChanged( bool $changed );
+    public function setIsChanged( bool $changed ): IConfigItem;
 
 
 }

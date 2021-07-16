@@ -28,7 +28,7 @@ class ConfigSectionTest extends TestCase
     private $_sectionNotEmpty;
 
 
-    public function setUp()
+    public function setUp() : void
     {
 
         $this->_sectionEmpty = new ConfigSection( 'emptySection', 'The optional empty section description…' );

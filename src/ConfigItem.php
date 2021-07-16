@@ -1,10 +1,10 @@
 <?php
 /**
  * @author         Ni Irrty <niirrty+code@gmail.com>
- * @copyright      © 2017-2020, Ni Irrty
+ * @copyright      © 2017-2021, Ni Irrty
  * @license        MIT
  * @since          2018-05-20
- * @version        0.3.0
+ * @version        0.4.0
  */
 
 
@@ -14,11 +14,8 @@ declare( strict_types=1 );
 namespace Niirrty\Config;
 
 
-use Niirrty\ArgumentException;
-use Niirrty\Date\DateTime;
-use Niirrty\IArrayable;
-use Niirrty\Type;
-use Niirrty\TypeTool;
+use \Niirrty\{ArgumentException, IArrayable, Type, TypeTool};
+use \Niirrty\Date\DateTime;
 
 
 class ConfigItem implements IConfigItem
@@ -32,19 +29,16 @@ class ConfigItem implements IConfigItem
 
 
     /** @type bool */
-    protected $_nullable;
+    protected bool $_nullable;
 
     /** @type bool */
-    protected $_changed;
+    protected bool $_changed;
 
     /** @type string */
-    protected $_type;
+    protected string $_type;
 
     /** @type mixed */
-    protected $_value;
-
-    /** @type IConfigElementBase */
-    protected $_parent;
+    protected mixed $_value;
 
 
     /**
@@ -55,13 +49,13 @@ class ConfigItem implements IConfigItem
      * @param null|string        $description Optional item description
      */
     public function __construct(
-        IConfigElementBase $parent, string $name, ?string $description = null )
+        protected IConfigElementBase $parent, string $name, ?string $description = null )
     {
 
         $this->_name = $name;
         $this->_description = \trim( $description ?? '' );
         $this->_nullable = false;
-        $this->_parent = $parent;
+        $this->_value = null;
 
         if ( '' === $this->_description )
         {
@@ -130,28 +124,14 @@ class ConfigItem implements IConfigItem
             return $this->_value;
         }
 
-        switch ( $this->_type )
+        return match ( $this->_type )
         {
-
-            case 'bool':
-            case 'boolean':
-                return $this->_value ? 'true' : 'false';
-
-            case 'array':
-                return \json_encode( $this->_value );
-
-            case '\\DateTime':
-            case '\\DateTimeInterface':
-            case 'DateTime':
-            case 'DateTimeInterface':
-            case 'Niirrty\\Date\\DateTime':
-            case '\\Niirrty\\Date\\DateTime':
-                return $this->_value->format( 'Y-m-d H:i:s' );
-
-            default:
-                return (string) $this->_value;
-
-        }
+            'bool', 'boolean' => $this->_value ? 'true' : 'false',
+            'array'           => \json_encode( $this->_value ),
+            '\\DateTime', '\\DateTimeInterface', 'DateTime', 'DateTimeInterface', 'Niirrty\\Date\\DateTime', '\\Niirrty\\Date\\DateTime'
+                              => $this->_value->format( 'Y-m-d H:i:s' ),
+            default           => (string) $this->_value,
+        };
 
     }
 
@@ -167,10 +147,11 @@ class ConfigItem implements IConfigItem
         {
             return TypeTool::ConvertNative( $this->_value, Type::PHP_INTEGER );
         }
-        catch ( \Throwable $ex )
+        catch ( \Throwable )
         {
             return null;
         }
+
     }
 
     /**
@@ -185,7 +166,7 @@ class ConfigItem implements IConfigItem
         {
             return TypeTool::ConvertNative( $this->_value, Type::PHP_BOOLEAN );
         }
-        catch ( \Throwable $ex )
+        catch ( \Throwable )
         {
             return null;
         }
@@ -204,7 +185,7 @@ class ConfigItem implements IConfigItem
         {
             return TypeTool::ConvertNative( $this->_value, Type::PHP_FLOAT );
         }
-        catch ( \Throwable $ex )
+        catch ( \Throwable )
         {
             return null;
         }
@@ -216,7 +197,7 @@ class ConfigItem implements IConfigItem
      *
      * @return mixed
      */
-    public function getValue()
+    public function getValue(): mixed
     {
 
         return $this->_value;
@@ -231,7 +212,7 @@ class ConfigItem implements IConfigItem
     public function getParent(): IConfigElementBase
     {
 
-        return $this->_parent;
+        return $this->parent;
 
     }
 
@@ -240,12 +221,12 @@ class ConfigItem implements IConfigItem
      *
      * @param IConfigElementBase $parentSection
      *
-     * @return $this
+     * @return ConfigItem
      */
-    public function setParent( IConfigElementBase $parentSection )
+    public function setParent( IConfigElementBase $parentSection ): ConfigItem
     {
 
-        $this->_parent = $parentSection;
+        $this->parent = $parentSection;
 
         return $this;
 
@@ -254,12 +235,12 @@ class ConfigItem implements IConfigItem
     /**
      * Sets a new value.
      *
-     * @param $value
+     * @param mixed $value
      *
-     * @return IConfigItem
-     * @throws ArgumentException if the config value is invalid
+     * @return ConfigItem
+     * @throws ArgumentException|\Throwable if the config value is invalid
      */
-    public function setValue( $value )
+    public function setValue( mixed $value ) : ConfigItem
     {
 
         if ( $this->_value === $value )
@@ -383,7 +364,7 @@ class ConfigItem implements IConfigItem
                         "The new value for config item '{$this->_name}' is not convertible to a integer!"
                     );
                 }
-                $this->_value = (float) \str_replace( ',', '.', $value );
+                $this->_value = (float) \str_replace( ',', '.', (string) $value );
 
                 return $this;
 
@@ -431,9 +412,9 @@ class ConfigItem implements IConfigItem
      *
      * @param bool $changed
      *
-     * @return IConfigItem
+     * @return ConfigItem
      */
-    public function setIsChanged( bool $changed )
+    public function setIsChanged( bool $changed ): ConfigItem
     {
 
         $this->_changed = $changed;
@@ -447,9 +428,9 @@ class ConfigItem implements IConfigItem
      *
      * @param bool $nullable
      *
-     * @return IConfigItem
+     * @return ConfigItem
      */
-    public function setIsNullable( bool $nullable )
+    public function setIsNullable( bool $nullable ) : ConfigItem
     {
 
         $this->_nullable = $nullable;
@@ -466,7 +447,7 @@ class ConfigItem implements IConfigItem
      *
      * @return IConfigItem
      */
-    public function setType( string $typeName )
+    public function setType( string $typeName ) : ConfigItem
     {
 
         $this->_type = $typeName;
@@ -507,9 +488,10 @@ class ConfigItem implements IConfigItem
      *
      * @return IConfigItem
      * @throws ArgumentException
+     * @throws \Throwable
      */
     public static function Create(
-        IConfigSection $parentSection, string $name, string $type, $value, bool $nullable = false ): IConfigItem
+        IConfigSection $parentSection, string $name, string $type, $value, bool $nullable = false ): ConfigItem
     {
 
         $item = ( new ConfigItem( $parentSection, $name ) )

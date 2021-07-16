@@ -1,10 +1,10 @@
 <?php
 /**
  * @author         Ni Irrty <niirrty+code@gmail.com>
- * @copyright      © 2017-2020, Ni Irrty
+ * @copyright      © 2017-2021, Ni Irrty
  * @license        MIT
  * @since          2018-06-04
- * @version        0.3.0
+ * @version        0.4.0
  */
 
 
@@ -14,9 +14,9 @@ declare( strict_types=1 );
 namespace Niirrty\Config\Provider;
 
 
-use Niirrty\Config\Exceptions\ConfigProviderOptionException;
-use Niirrty\IO\File;
-use Niirrty\IO\Vfs\IVfsManager;
+use \Niirrty\Config\Exceptions\ConfigProviderOptionException;
+use \Niirrty\IO\File;
+use \Niirrty\IO\Vfs\IVfsManager;
 
 
 abstract class AbstractFileConfigProvider extends BaseConfigProvider
@@ -24,19 +24,16 @@ abstract class AbstractFileConfigProvider extends BaseConfigProvider
 
 
     /** @type bool */
-    protected $_fileExists = false;
+    protected bool $_fileExists = false;
 
     /** @type IVfsManager|null */
-    protected $_vfsManager = null;
+    protected ?IVfsManager $_vfsManager = null;
 
 
-    protected function _construct( string $name, array $extensions )
+    protected function __construct( string $name, array $extensions )
     {
 
-        $this->_options[ 'file' ] = null;
-        $this->_options[ 'extensions' ] = $extensions;
-        $this->_name = $name;
-        $this->_valid = false;
+        parent::__construct( $name, [ 'file' => null, 'extensions' => $extensions ] );
 
     }
 
@@ -69,7 +66,7 @@ abstract class AbstractFileConfigProvider extends BaseConfigProvider
             if ( \is_dir( $filePath ) )
             {
                 throw new ConfigProviderOptionException(
-                    $this->_name,
+                    $this->name,
                     'file',
                     'Can not set the config file if it points to a directory and not a file!'
                 );
@@ -80,7 +77,7 @@ abstract class AbstractFileConfigProvider extends BaseConfigProvider
             if ( !\is_dir( $dir ) )
             {
                 throw new ConfigProviderOptionException(
-                    $this->_name,
+                    $this->name,
                     'file',
                     'Can not set the config file if it points to a not existing file inside a not existing directory!'
                 );
@@ -89,13 +86,13 @@ abstract class AbstractFileConfigProvider extends BaseConfigProvider
             if ( !\is_writable( $dir ) )
             {
                 throw new ConfigProviderOptionException(
-                    $this->_name,
+                    $this->name,
                     'file',
                     'Can not set the config file if it points to a not writable directory!'
                 );
             }
 
-            $this->_options[ 'file' ] = $filePath;
+            $this->options[ 'file' ] = $filePath;
             $this->_valid = true;
             $this->_fileExists = false;
 
@@ -106,17 +103,17 @@ abstract class AbstractFileConfigProvider extends BaseConfigProvider
         if ( !\is_readable( $filePath ) )
         {
             throw new ConfigProviderOptionException(
-                $this->_name,
+                $this->name,
                 'file',
                 'Can not set this provider option if the value not points to a unreadable file!'
             );
         }
 
         $extension = File::GetExtensionName( $filePath );
-        if ( false === $extension || !\in_array( \strtolower( $extension ), $this->_options[ 'extensions' ] ) )
+        if ( false === $extension || !\in_array( \strtolower( $extension ), $this->options[ 'extensions' ] ) )
         {
             throw new ConfigProviderOptionException(
-                $this->_name,
+                $this->name,
                 'file',
                 'Can not set this provider option because the file name extension "'
                 . $extension
@@ -124,7 +121,7 @@ abstract class AbstractFileConfigProvider extends BaseConfigProvider
             );
         }
 
-        $this->_options[ 'file' ] = $filePath;
+        $this->options[ 'file' ] = $filePath;
         $this->_valid = true;
         $this->_fileExists = true;
 
@@ -146,7 +143,7 @@ abstract class AbstractFileConfigProvider extends BaseConfigProvider
         if ( 1 > \count( $extensions ) )
         {
             throw new ConfigProviderOptionException(
-                $this->_name,
+                $this->name,
                 'extensions',
                 'Can not set this provider option if the value is a empty array!'
             );
@@ -156,25 +153,25 @@ abstract class AbstractFileConfigProvider extends BaseConfigProvider
             if ( !\is_string( $extension ) || !\preg_match( '~^[a-zA-Z0-9]{1,5}$~', $extension ) )
             {
                 throw new ConfigProviderOptionException(
-                    $this->_name,
+                    $this->name,
                     'extensions',
                     'Can not set this provider option if not contains string values (1-5 alpha numeric chars)!'
                 );
             }
         }
-        if ( null !== $this->_options[ 'file' ] )
+        if ( null !== $this->options[ 'file' ] )
         {
-            $extension = File::GetExtensionName( $this->_options[ 'file' ] );
+            $extension = File::GetExtensionName( $this->options[ 'file' ] );
             if ( false === $extension || !\in_array( \strtolower( $extension ), $extensions ) )
             {
                 throw new ConfigProviderOptionException(
-                    $this->_name,
+                    $this->name,
                     'extensions',
                     'Can not set the option because the defined file not use one of the allowed extensions!'
                 );
             }
         }
-        $this->_options[ 'extensions' ] = $extensions;
+        $this->options[ 'extensions' ] = $extensions;
 
         return $this;
 
@@ -188,7 +185,7 @@ abstract class AbstractFileConfigProvider extends BaseConfigProvider
     public function getFile(): ?string
     {
 
-        return $this->_options[ 'file' ];
+        return $this->options[ 'file' ];
 
     }
 
@@ -200,7 +197,7 @@ abstract class AbstractFileConfigProvider extends BaseConfigProvider
     public function getExtensions(): array
     {
 
-        return $this->_options[ 'extensions' ];
+        return $this->options[ 'extensions' ];
 
     }
 

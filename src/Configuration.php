@@ -1,10 +1,10 @@
 <?php
 /**
  * @author         Ni Irrty <niirrty+code@gmail.com>
- * @copyright      © 2017-2020, Ni Irrty
+ * @copyright      © 2017-2021, Ni Irrty
  * @license        MIT
  * @since          2018-05-23
- * @version        0.3.0
+ * @version        0.4.0
  */
 
 
@@ -14,9 +14,9 @@ declare( strict_types=1 );
 namespace Niirrty\Config;
 
 
-use Niirrty\ArgumentException;
-use Niirrty\Config\Provider\IConfigProvider;
-use Traversable;
+use \Niirrty\ArgumentException;
+use \Niirrty\Config\Provider\IConfigProvider;
+use \Traversable;
 
 
 /**
@@ -33,14 +33,10 @@ use Traversable;
 class Configuration implements IConfiguration
 {
 
-
-    /** @type IConfigProvider */
-    private $_provider;
-
     /** @type IConfigSection[] */
-    protected $_sections;
+    protected array $_sections;
 
-    protected $_changed = false;
+    protected bool $_changed = false;
 
 
     /**
@@ -51,7 +47,7 @@ class Configuration implements IConfiguration
      *
      * @throws ArgumentException
      */
-    public function __construct( IConfigProvider $provider, array $input = [] )
+    public function __construct( private IConfigProvider $provider, array $input = [] )
     {
 
         if ( \count( $input ) > 0 )
@@ -73,7 +69,6 @@ class Configuration implements IConfiguration
         }
 
         $this->_sections = $input;
-        $this->_provider = $provider;
 
     }
 
@@ -105,7 +100,7 @@ class Configuration implements IConfiguration
     public function getProvider(): IConfigProvider
     {
 
-        return $this->_provider;
+        return $this->provider;
 
     }
 
@@ -117,7 +112,7 @@ class Configuration implements IConfiguration
      * @return Configuration
      * @throws ArgumentException If the item not define a parent section
      */
-    public function setItem( IConfigItem $item )
+    public function setItem( IConfigItem $item ) : Configuration
     {
 
         if ( null === $item->getParent() || '' === $item->getParent()->getName() )
@@ -154,7 +149,7 @@ class Configuration implements IConfiguration
      * @return Configuration
      * @throws ArgumentException
      */
-    public function setValue( string $sectionName, string $itemName, $value )
+    public function setValue( string $sectionName, string $itemName, mixed $value ) : Configuration
     {
 
         if ( !$this->hasSection( $sectionName ) )
@@ -189,7 +184,7 @@ class Configuration implements IConfiguration
      *
      * @return Configuration
      */
-    public function setSection( IConfigSection $section )
+    public function setSection( IConfigSection $section ) : Configuration
     {
 
         $this->_sections[ $section->getName() ] = $section;
@@ -244,7 +239,7 @@ class Configuration implements IConfiguration
      *
      * @return mixed
      */
-    public function getValue( string $sectionName, string $itemName )
+    public function getValue( string $sectionName, string $itemName ) : mixed
     {
 
         return ( null === ( $item = $this->getItem( $sectionName, $itemName ) ) )
@@ -283,9 +278,9 @@ class Configuration implements IConfiguration
      *
      * @param bool $isChanged
      *
-     * @return mixed
+     * @return Configuration
      */
-    public function setIsChanged( bool $isChanged )
+    public function setIsChanged( bool $isChanged ) : Configuration
     {
 
         $this->_changed = $isChanged;
@@ -337,9 +332,9 @@ class Configuration implements IConfiguration
     /**
      * Retrieve an external iterator
      *
-     * @return Traversable An instance of an object implementing <b>Iterator</b> or <b>Traversable</b>
+     * @return Traversable|\ArrayIterator An instance of an object implementing <b>Iterator</b> or <b>Traversable</b>
      */
-    public function getIterator()
+    public function getIterator(): Traversable|\ArrayIterator
     {
 
         return new \ArrayIterator( $this->_sections );
@@ -356,7 +351,7 @@ class Configuration implements IConfiguration
      * @return bool true on success or false on failure.
      *              The return value will be casted to boolean if non-boolean was returned.
      */
-    public function offsetExists( $offset )
+    public function offsetExists( $offset ): bool
     {
 
         [ $sectionName, $itemName ] = $this->expandOffset( $offset );
@@ -378,9 +373,9 @@ class Configuration implements IConfiguration
      *
      * @param mixed $offset The offset to retrieve.
      *
-     * @return IConfigSection|null
+     * @return IConfigSection|IConfigItem|null
      */
-    public function offsetGet( $offset )
+    public function offsetGet( $offset ): IConfigSection|IConfigItem|null
     {
 
         [ $sectionName, $itemName ] = $this->expandOffset( $offset );
@@ -393,9 +388,7 @@ class Configuration implements IConfiguration
                 : null;
         }
 
-        return isset( $this->_sections[ $sectionName ] )
-            ? $this->_sections[ $sectionName ]
-            : null;
+        return $this->_sections[ $sectionName ] ?? null;
 
     }
 
@@ -511,7 +504,7 @@ class Configuration implements IConfiguration
      *
      * @return int The custom count as an integer. The return value is cast to an integer.
      */
-    public function count()
+    public function count(): int
     {
 
         return \count( $this->_sections );
@@ -519,7 +512,7 @@ class Configuration implements IConfiguration
     }
 
 
-    protected function expandOffset( string $offset )
+    protected function expandOffset( string $offset ): array
     {
 
         $parts = \explode( '::', $offset, 2 );

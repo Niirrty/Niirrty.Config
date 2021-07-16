@@ -27,7 +27,7 @@ class XMLConfigProviderTest extends TestCase
     private $_provider;
 
 
-    public function setUp()
+    public function setUp() : void
     {
 
         \chmod( __DIR__ . '/../../../data/config.xml', 0700 );
@@ -37,7 +37,7 @@ class XMLConfigProviderTest extends TestCase
 
     }
 
-    public function tearDown()
+    public function tearDown() : void
     {
 
         \chmod( __DIR__ . '/../../../data/config.xml', 0700 );
@@ -161,97 +161,6 @@ class XMLConfigProviderTest extends TestCase
 
     }
 
-    public function test_read()
-    {
-
-        $config = $this->_provider->read();
-        $this->assertInstanceOf( IConfiguration::class, $config );
-        $this->assertEquals(
-            [ [
-                  'name'        => 'default',
-                  'description' => 'A optional section description…',
-                  'items'       => [
-                      [
-                          'name'        => 'PageName',
-                          'description' => 'A config item description…',
-                          'nullable'    => false,
-                          'type'        => 'string',
-                          'value'       => '¿?¿? ¡!¡! - Foo Bar - !¡!¡ ?¿?¿',
-                      ],
-                      [
-                          'name'        => 'Blub',
-                          'description' => "A longer description for the configuration item,\nwith a line break, huuhh :-)",
-                          'nullable'    => false,
-                          'type'        => 'string',
-                          'value'       => "This is also a value, but\nwith a new line!",
-                      ],
-                      [
-                          'name'        => 'Blubber',
-                          'nullable'    => true,
-                          'type'        => 'string',
-                          'value'       => null,
-                          'description' => null,
-                      ],
-                      [
-                          'name'        => 'Abc',
-                          'nullable'    => false,
-                          'type'        => 'bool',
-                          'value'       => true,
-                          'description' => null,
-                      ],
-                      [
-                          'name'        => 'Def',
-                          'nullable'    => false,
-                          'type'        => 'int',
-                          'value'       => -123,
-                          'description' => null,
-                      ],
-                      [
-                          'name'        => 'Ghi',
-                          'nullable'    => false,
-                          'type'        => 'float',
-                          'value'       => 12.3,
-                          'description' => null,
-                      ],
-                      [
-                          'name'        => 'Jkl',
-                          'nullable'    => false,
-                          'type'        => 'array',
-                          'value'       => [ 'Foo', 'Bar' ],
-                          'description' => null,
-                      ],
-                      [
-                          'name'        => 'Mno',
-                          'nullable'    => false,
-                          'type'        => '\\DateTime',
-                          'value'       => '2017-04-14 12:47:25',
-                          'description' => null,
-                      ],
-                  ],
-              ] ],
-            $config->toArray()
-        );
-
-        $config = $this->_provider->read( [ 'unknownSection' ] );
-
-        $this->assertSame( 0, \count( $config ) );
-
-        $config = $this->_provider->read( [] );
-
-        $this->assertSame( 1, \count( $config ) );
-        $this->assertSame( 8, \count( $config[ 'default' ] ) );
-
-        $configFile = __DIR__ . '/../../../data/config-no-existing.xml';
-        if ( \file_exists( $configFile ) )
-        {
-            \unlink( $configFile );
-        }
-        $this->_provider->setFile( $configFile );
-        $config = $this->_provider->read();
-        $this->assertSame( 0, \count( $config ) );
-
-    }
-
     public function test_readException1()
     {
 
@@ -339,7 +248,7 @@ class XMLConfigProviderTest extends TestCase
         $newFile = __DIR__ . '/../../../data/config-tmp.xml';
         $this->_provider->setFile( $newFile );
         $this->_provider->write( $config );
-        $this->assertSame( <<<XML
+        $this->assertSame( \str_replace( "\r\n", "\n", <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <Config>
   <Section name="default">
@@ -350,9 +259,10 @@ class XMLConfigProviderTest extends TestCase
     </Item>
     <Item name="Blub" type="string" nullable="false">
       <Value>This is also a value, but
-with a new line!</Value>
+                with a new line!
+            </Value>
       <Description>A longer description for the configuration item,
-with a line break, huuhh :-)</Description>
+                with a line break, huuhh :-)</Description>
     </Item>
     <Item name="Blubber" type="string" nullable="true">
       <Value/>
@@ -368,7 +278,7 @@ with a line break, huuhh :-)</Description>
 </Config>
 
 XML
-            ,
+                           ),
             \file_get_contents( __DIR__ . '/../../../data/config-tmp.xml' ) );
         \unlink( $newFile );
 

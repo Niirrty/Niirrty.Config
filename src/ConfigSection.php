@@ -1,10 +1,10 @@
 <?php
 /**
  * @author         Ni Irrty <niirrty+code@gmail.com>
- * @copyright      © 2017-2020, Ni Irrty
+ * @copyright      © 2017-2021, Ni Irrty
  * @license        MIT
  * @since          2018-05-20
- * @version        0.3.0
+ * @version        0.4.0
  */
 
 
@@ -14,8 +14,8 @@ declare( strict_types=1 );
 namespace Niirrty\Config;
 
 
-use Niirrty\ArgumentException;
-use Traversable;
+use \Niirrty\ArgumentException;
+use \Traversable;
 
 
 /**
@@ -31,10 +31,10 @@ class ConfigSection implements IConfigSection
     use ConfigElementTrait;
 
 
-    protected $_changed = false;
+    protected bool $_changed = false;
 
     /** @type IConfigItem[] */
-    protected $_items;
+    protected array $_items;
 
 
     /**
@@ -83,9 +83,9 @@ class ConfigSection implements IConfigSection
      *
      * @param IConfigItem $item
      *
-     * @return IConfigSection
+     * @return ConfigSection
      */
-    public function setItem( IConfigItem $item )
+    public function setItem( IConfigItem $item ) : ConfigSection
     {
 
         $item->setParent( $this );
@@ -103,10 +103,10 @@ class ConfigSection implements IConfigSection
      * @param string $name  The name (string) of the config item
      * @param mixed  $value The config value.
      *
-     * @return IConfigSection
+     * @return ConfigSection
      * @throws ArgumentException If $nameOrId is unknown
      */
-    public function setValue( string $name, $value )
+    public function setValue( string $name, mixed $value ) : ConfigSection
     {
 
         if ( !isset( $this[ $name ] ) )
@@ -129,9 +129,9 @@ class ConfigSection implements IConfigSection
      *
      * @param string $name The name (string) of the config item
      *
-     * @return IConfigItem|null
+     * @return ConfigItem|null
      */
-    public function getItem( string $name ): ?IConfigItem
+    public function getItem( string $name ): ?ConfigItem
     {
 
         return isset( $this[ $name ] ) ? $this[ $name ] : null;
@@ -145,7 +145,7 @@ class ConfigSection implements IConfigSection
      *
      * @return mixed
      */
-    public function getValue( string $name )
+    public function getValue( string $name ) : mixed
     {
 
         return isset( $this[ $name ] ) ? $this[ $name ]->getValue() : null;
@@ -182,9 +182,9 @@ class ConfigSection implements IConfigSection
      *
      * @param bool $isChanged
      *
-     * @return mixed
+     * @return ConfigSection
      */
-    public function setIsChanged( bool $isChanged )
+    public function setIsChanged( bool $isChanged ) : ConfigSection
     {
 
         $this->_changed = $isChanged;
@@ -222,11 +222,10 @@ class ConfigSection implements IConfigSection
      * Retrieve an external iterator
      *
      * @link  http://php.net/manual/en/iteratoraggregate.getiterator.php
-     * @return Traversable An instance of an object implementing <b>Iterator</b> or
-     * <b>Traversable</b>
+     * @return Traversable|\ArrayIterator An instance of an object implementing Iterator or Traversable
      * @since 5.0.0
      */
-    public function getIterator()
+    public function getIterator(): Traversable|\ArrayIterator
     {
 
         return new \ArrayIterator( $this->_items );
@@ -243,7 +242,7 @@ class ConfigSection implements IConfigSection
      * @return bool true on success or false on failure.
      *              The return value will be casted to boolean if non-boolean was returned.
      */
-    public function offsetExists( $offset )
+    public function offsetExists( $offset ): bool
     {
 
         return isset( $this->_items[ $offset ] );
@@ -259,7 +258,7 @@ class ConfigSection implements IConfigSection
      *
      * @return IConfigItem|null
      */
-    public function offsetGet( $offset )
+    public function offsetGet( $offset ): ?IConfigItem
     {
 
         return $this->offsetExists( $offset ) ? $this->_items[ $offset ] : null;
@@ -329,7 +328,7 @@ class ConfigSection implements IConfigSection
      *
      * @return int The custom count as an integer. The return value is cast to an integer.
      */
-    public function count()
+    public function count(): int
     {
 
         return \count( $this->_items );

@@ -27,7 +27,7 @@ class JSONConfigProviderTest extends TestCase
     /** @type JSONConfigProvider */
     private $_provider;
 
-    public function setUp()
+    public function setUp() : void
     {
 
         $this->_provider = JSONConfigProvider::Init( __DIR__ . '/../../../data/config.json' );
@@ -234,30 +234,6 @@ class JSONConfigProviderTest extends TestCase
 
     }
 
-    public function test_readException4()
-    {
-
-        $rootFolder = Path::Combine( \sys_get_temp_dir(), 'Niirty.Config.Tests' );
-        if ( !\is_dir( $rootFolder ) )
-        {
-            \mkdir( $rootFolder );
-        }
-        $configFile = $rootFolder . '/config.json';
-        if ( @\is_file( $configFile ) && \file_exists( $configFile ) )
-        {
-            \chmod( $configFile, 0700 );
-            \unlink( $configFile );
-        }
-        \file_put_contents( $configFile, \json_encode( [ [ 'name' => 'default' ] ] ) );
-        \chmod( $configFile, 0000 );
-        $this->expectException( ConfigProviderException::class );
-        $this->_provider->setFile( $configFile );
-        $this->_provider->read();
-        \chmod( $configFile, 0700 );
-        \unlink( $configFile );
-
-    }
-
     public function test_readException5()
     {
 
@@ -334,7 +310,7 @@ class JSONConfigProviderTest extends TestCase
         \touch( $newFile );
         $this->_provider->setFile( $newFile );
         $this->_provider->write( $config );
-        $this->assertSame( <<<JSON
+        $this->assertSame( str_replace( "\r\n", "\n", <<<JSON
 [
     {
         "name": "default",
@@ -365,7 +341,7 @@ class JSONConfigProviderTest extends TestCase
     }
 ]
 JSON
-            ,
+                           ),
             \file_get_contents( __DIR__ . '/../../../data/config-tmp.json' ) );
         \unlink( $newFile );
 

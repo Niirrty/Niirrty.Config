@@ -28,7 +28,7 @@ class ConfigurationTest extends TestCase
     /** @type Configuration */
     private $_config;
 
-    public function setUp()
+    public function setUp() : void
     {
 
         $section1 = new ConfigSection( 'default' );
@@ -59,11 +59,11 @@ class ConfigurationTest extends TestCase
 
                 public function getOptionNames(): array { return []; }
 
-                public function setOption( string $name, $value ) { return $this; }
+                public function setOption( string $name, mixed $value ) : IConfigProvider { return $this; }
 
                 public function hasOption( string $name ): bool { return false; }
 
-                public function getOption( string $name ): bool { return null; }
+                public function getOption( string $name ): bool { return false; }
 
                 public function read(
                     ?array $sectionNames = null ): IConfiguration
@@ -71,7 +71,7 @@ class ConfigurationTest extends TestCase
                     return new Configuration( $this );
                 }
 
-                public function write( IConfiguration $config ) { return $this; }
+                public function write( IConfiguration $config ) : IConfigProvider { return $this; }
 
 
             }

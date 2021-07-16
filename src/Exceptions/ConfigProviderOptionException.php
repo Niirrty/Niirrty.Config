@@ -1,10 +1,10 @@
 <?php
 /**
  * @author         Ni Irrty <niirrty+code@gmail.com>
- * @copyright      © 2017-2020, Ni Irrty
+ * @copyright      © 2017-2021, Ni Irrty
  * @license        MIT
  * @since          2018-05-26
- * @version        0.3.0
+ * @version        0.4.0
  */
 
 
@@ -18,20 +18,16 @@ class ConfigProviderOptionException extends ConfigProviderException
 {
 
 
-    /** @type string The name of the option */
-    protected $_optionName;
-
-
     /**
      * ConfigProviderOptionException constructor.
      *
      * @param string          $providerName
-     * @param string          $optionName
+     * @param string          $optionName   The name of the option
      * @param null|string     $message
      * @param null|\Throwable $previous
      */
     public function __construct(
-        string $providerName, string $optionName, ?string $message = null, ?\Throwable $previous = null )
+        string $providerName, protected string $optionName, ?string $message = null, ?\Throwable $previous = null )
     {
 
         parent::__construct(
@@ -40,7 +36,12 @@ class ConfigProviderOptionException extends ConfigProviderException
             $previous
         );
 
-        $this->_optionName = $optionName;
+    }
+
+    public function getOptionName() : string
+    {
+
+        return $this->optionName;
 
     }
 

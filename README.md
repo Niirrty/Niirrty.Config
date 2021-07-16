@@ -23,7 +23,7 @@ A Provider is used to read config data from a specific format and write config d
 This is a package available via composer:
 
 ```bash
-composer require niirrty/niirrty.config ^0.1 
+composer require niirrty/niirrty.config ^0.4 
 ```
 
 or inside the `require` area of the `composer.json`:
@@ -31,8 +31,8 @@ or inside the `require` area of the `composer.json`:
 ```json
 {
    "require": {
-                "php": ">=7.1",
-                "niirrty/niirrty.config": "^0.1"
+                "php": ">=8.0",
+                "niirrty/niirrty.config": "^0.4"
               }
 }
 ```
@@ -248,7 +248,7 @@ The XML config file must be defined by the following format:
 </Config>
 ```
 
-A section must be defined by the 'name' and the 'items'. The 'description' ist optionally.
+A section must be defined by the 'name' and the 'items'. The 'description' is optionally.
 
 A item must be defined by the 'name' and 'value' properties. The 'description' is optionally.
 'nullable' defaults to false, and the 'type' defaults to string

@@ -1,10 +1,10 @@
 <?php
 /**
  * @author         Ni Irrty <niirrty+code@gmail.com>
- * @copyright      © 2017-2020, Ni Irrty
+ * @copyright      © 2017-2021, Ni Irrty
  * @license        MIT
  * @since          2018-05-25
- * @version        0.3.0
+ * @version        0.4.0
  */
 
 
@@ -79,7 +79,7 @@ class JSONConfigProvider extends AbstractFileConfigProvider implements IConfigPr
     public function __construct( string $name = 'JSON' )
     {
 
-        parent::_construct( empty( $name ) ? 'JSON' : $name, [ 'json' ] );
+        parent::__construct( empty( $name ) ? 'JSON' : $name, [ 'json' ] );
 
     }
 
@@ -111,29 +111,25 @@ class JSONConfigProvider extends AbstractFileConfigProvider implements IConfigPr
             $sectionNames = null;
         }
 
-        $dataString = null;
-
-        $dataString = IOHelper::fileGetContents( $this->_options[ 'file' ] );
+        $dataString = IOHelper::fileGetContents( $this->options[ 'file' ] );
 
         if ( empty( $dataString ) )
         {
             throw new ConfigProviderException(
-                $this->_name,
+                $this->name,
                 'Unable to load config data from file "'
-                . $this->_options[ 'file' ]
+                . $this->options[ 'file' ]
                 . '" if the file is empty or not readable!'
             );
         }
-
-        $data = null;
 
         $data = @\json_decode( $dataString, true );
 
         if ( !\is_array( $data ) )
         {
             throw new ConfigProviderException(
-                $this->_name,
-                'Unable to load config data from file "' . $this->_options[ 'file' ] . '" if the data are invalid JSON!'
+                $this->name,
+                'Unable to load config data from file "' . $this->options[ 'file' ] . '" if the data are invalid JSON!'
             );
         }
 
@@ -142,7 +138,7 @@ class JSONConfigProvider extends AbstractFileConfigProvider implements IConfigPr
             if ( !isset( $sectionData[ 'name' ] ) )
             {
                 throw new ConfigParseException(
-                    $this->_name,
+                    $this->name,
                     'Invalid config section, a section must have a name.'
                 );
             }
@@ -162,7 +158,7 @@ class JSONConfigProvider extends AbstractFileConfigProvider implements IConfigPr
                     if ( !isset( $itemData[ 'name' ] ) )
                     {
                         throw new ConfigParseException(
-                            $this->_name,
+                            $this->name,
                             'Invalid config item in section "' . $sectionName . '", missing a item name.'
                         );
                     }
@@ -182,7 +178,7 @@ class JSONConfigProvider extends AbstractFileConfigProvider implements IConfigPr
                         if ( !$nullable )
                         {
                             throw new ConfigParseException(
-                                $this->_name,
+                                $this->name,
                                 'Invalid config item "'
                                 . $itemName
                                 . '" in section "'
@@ -201,7 +197,7 @@ class JSONConfigProvider extends AbstractFileConfigProvider implements IConfigPr
                         catch ( \Throwable $ex )
                         {
                             throw new ConfigParseException(
-                                $this->_name,
+                                $this->name,
                                 'Invalid config item "'
                                 . $itemName
                                 . '" value in section "'
@@ -232,21 +228,21 @@ class JSONConfigProvider extends AbstractFileConfigProvider implements IConfigPr
      * @throws ConfigProviderException
      * @throws FileAccessException
      */
-    public function write( IConfiguration $config )
+    public function write( IConfiguration $config ) : JSONConfigProvider
     {
 
         // If the file is not writable trigger a exception
-        if ( $this->_fileExists && !\is_writable( $this->_options[ 'file' ] ) )
+        if ( $this->_fileExists && ! \is_writable( $this->options[ 'file' ] ) )
         {
             throw new ConfigProviderException(
-                $this->_name,
-                'Can not write to config file "' . $this->_options[ 'file' ] . '" if the file is not writable!'
+                $this->name,
+                'Can not write to config file "' . $this->options[ 'file' ] . '" if the file is not writable!'
             );
         }
 
         // Write JSON data to JSON config file and handle errors
         IOHelper::fileSetContents(
-            $this->_options[ 'file' ],
+            $this->options[ 'file' ],
             \json_encode( $config->toArray(), \JSON_PRETTY_PRINT )
         );
 
@@ -263,21 +259,16 @@ class JSONConfigProvider extends AbstractFileConfigProvider implements IConfigPr
      * @param string $name  The option name.
      * @param mixed  $value The option value.
      */
-    protected function validateOption( string $name, $value )
-    {
-
-        return;
-
-    }
+    protected function validateOption( string $name, mixed $value ) {}
 
 
     /**
      * Init a new JSON config provider.
      *
-     * @param string     $file       The path of the JSON config file.
-     * @param array      $extensions Allowed JSON file name extensions.
-     * @param string     $name       The name of the JSO provider.
-     * @param VfsManager $vfsManager Optional VFS Manager to handle VFS paths
+     * @param string          $file       The path of the JSON config file.
+     * @param array           $extensions Allowed JSON file name extensions.
+     * @param string          $name       The name of the JSO provider.
+     * @param VfsManager|null $vfsManager Optional VFS Manager to handle VFS paths
      *
      * @return JSONConfigProvider
      * @throws ConfigProviderOptionException

@@ -1,10 +1,10 @@
 <?php
 /**
  * @author         Ni Irrty <niirrty+code@gmail.com>
- * @copyright      © 2017-2020, Ni Irrty
+ * @copyright      © 2017-2021, Ni Irrty
  * @license        MIT
  * @since          2018-05-26
- * @version        0.3.0
+ * @version        0.4.0
  */
 
 
@@ -22,18 +22,32 @@ use Niirrty\Config\Exceptions\ConfigProviderOptionException;
  *
  * @package Niirrty\Config\Provider
  */
-abstract class BaseConfigProvider
+abstract class BaseConfigProvider implements IConfigProvider
 {
 
 
-    /** @type string The provider name */
-    protected $_name;
-
-    /** @type array The provider depending options */
-    protected $_options = [];
+    #region // - - -   P R O T E C T E D   F I E L D S   - - - - - - - - - - - - - - - - - - - - - - -
 
     /** @type bool Holds the state if the provider is valid */
-    protected $_valid;
+    protected bool $_valid;
+
+    #endregion
+
+
+    #region // = = =   C O N S T R U C T O R   = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+    /**
+     * BaseConfigProvider constructor.
+     *
+     * @param string $name    The provider name
+     * @param array  $options The provider depending options
+     */
+    protected function __construct( protected string $name = '', protected array $options = [] )
+    {
+        $this->_valid = false;
+    }
+
+    #endregion
 
 
     /**
@@ -44,7 +58,7 @@ abstract class BaseConfigProvider
     public final function getName(): string
     {
 
-        return $this->_name;
+        return $this->name;
 
     }
 
@@ -68,7 +82,7 @@ abstract class BaseConfigProvider
     public function getOptions(): array
     {
 
-        return $this->_options;
+        return $this->options;
 
     }
 
@@ -80,7 +94,7 @@ abstract class BaseConfigProvider
     public function getOptionNames(): array
     {
 
-        return \array_keys( $this->_options );
+        return \array_keys( $this->options );
 
     }
 
@@ -91,10 +105,10 @@ abstract class BaseConfigProvider
      *
      * @return mixed
      */
-    public function getOption( string $name )
+    public function getOption( string $name ): mixed
     {
 
-        return $this->_options[ $name ] ?? null;
+        return $this->options[ $name ] ?? null;
 
     }
 
@@ -104,10 +118,10 @@ abstract class BaseConfigProvider
      * @param string $name
      * @param mixed  $value
      *
-     * @return $this
+     * @return IConfigProvider
      * @throws ConfigProviderOptionException
      */
-    public function setOption( string $name, $value )
+    public function setOption( string $name, mixed $value ): IConfigProvider
     {
 
         $methodName = 'set' . \ucfirst( $name );
@@ -120,7 +134,7 @@ abstract class BaseConfigProvider
 
         $this->validateOption( $name, $value );
 
-        $this->_options[ $name ] = $value;
+        $this->options[ $name ] = $value;
 
         return $this;
 
@@ -136,7 +150,7 @@ abstract class BaseConfigProvider
     public function hasOption( string $name ): bool
     {
 
-        return \array_key_exists( $name, $this->_options );
+        return \array_key_exists( $name, $this->options );
 
     }
 
@@ -148,7 +162,7 @@ abstract class BaseConfigProvider
      *
      * @throws ConfigProviderOptionException If a wrong option is defined.
      */
-    protected abstract function validateOption( string $name, $value );
+    protected abstract function validateOption( string $name, mixed $value );
 
 
 }

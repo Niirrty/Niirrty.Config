@@ -30,7 +30,7 @@ class PHPConfigProviderTest extends TestCase
     private $_provider;
 
 
-    public function setUp()
+    public function setUp() : void
     {
 
         $this->_provider = PHPConfigProvider::Init( __DIR__ . '/../../../data/config.php' );
@@ -39,7 +39,7 @@ class PHPConfigProviderTest extends TestCase
 
     }
 
-    public function tearDown()
+    public function tearDown() : void
     {
 
         \chmod( __DIR__ . '/../../../data', 0700 );
@@ -61,11 +61,11 @@ class PHPConfigProviderTest extends TestCase
 
         $this->_provider->setFile( 'data://config.php', $vfsManager );
         $this->assertTrue( $this->_provider->isValid() );
-        $this->assertSame( __DIR__ . '/../../../data/config.php', $this->_provider->getFile() );
+        $this->assertSame( \str_replace( '\\', '/', __DIR__ ) . '/../../../data/config.php', \str_replace( '\\', '/', $this->_provider->getFile() ) );
 
         $this->_provider->setFile( 'data://config.php' );
         $this->assertTrue( $this->_provider->isValid() );
-        $this->assertSame( __DIR__ . '/../../../data/config.php', $this->_provider->getFile() );
+        $this->assertSame( \str_replace( '\\', '/', __DIR__ ) . '/../../../data/config.php', \str_replace( '\\', '/', $this->_provider->getFile() ) );
 
     }
 
@@ -382,7 +382,7 @@ class PHPConfigProviderTest extends TestCase
         \touch( $newFile );
         $this->_provider->setFile( $newFile );
         $this->_provider->write( $config );
-        $this->assertSame( <<<PHP
+        $this->assertSame( \str_replace( "\r\n", "\n", <<<PHP
 <?php
 return [
    'default' => [
@@ -409,7 +409,7 @@ return [
 ];
 
 PHP
-            ,
+                           ),
             \file_get_contents( __DIR__ . '/../../../data/config-tmp.php' ) );
         \unlink( $newFile );
 

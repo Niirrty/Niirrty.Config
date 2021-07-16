@@ -1,10 +1,10 @@
 <?php
 /**
  * @author         Ni Irrty <niirrty+code@gmail.com>
- * @copyright      © 2017-2020, Ni Irrty
+ * @copyright      © 2017-2021, Ni Irrty
  * @license        MIT
  * @since          2018-05-19
- * @version        0.3.0
+ * @version        0.4.0
  */
 
 
@@ -14,9 +14,9 @@ declare( strict_types=1 );
 namespace Niirrty\Config;
 
 
-use Niirrty\ArgumentException;
-use Niirrty\Config\Provider\IConfigProvider;
-use Niirrty\IArrayable;
+use \Niirrty\ArgumentException;
+use \Niirrty\Config\Provider\IConfigProvider;
+use \Niirrty\IArrayable;
 
 
 interface IConfiguration extends IArrayable, \ArrayAccess, \IteratorAggregate, \Countable
@@ -35,19 +35,19 @@ interface IConfiguration extends IArrayable, \ArrayAccess, \IteratorAggregate, \
      *
      * @param IConfigItem $item
      *
-     * @return mixed
+     * @return IConfiguration
      * @throws ArgumentException If the item not define a parent section
      */
-    public function setItem( IConfigItem $item );
+    public function setItem( IConfigItem $item ): IConfiguration;
 
     /**
      * Sets the config section.
      *
      * @param IConfigSection $section The section.
      *
-     * @return Configuration
+     * @return IConfiguration
      */
-    public function setSection( IConfigSection $section );
+    public function setSection( IConfigSection $section ): IConfiguration;
 
     /**
      * Sets the configuration value.
@@ -56,10 +56,10 @@ interface IConfiguration extends IArrayable, \ArrayAccess, \IteratorAggregate, \
      * @param string $itemName    The item name or ID.
      * @param mixed  $value
      *
-     * @return Configuration
+     * @return IConfiguration
      * @throws ArgumentException
      */
-    public function setValue( string $sectionName, string $itemName, $value );
+    public function setValue( string $sectionName, string $itemName, mixed $value ): IConfiguration;
 
     /**
      * Gets the config item for defined defined section and item name, or null if not found.
@@ -88,7 +88,7 @@ interface IConfiguration extends IArrayable, \ArrayAccess, \IteratorAggregate, \
      *
      * @return mixed
      */
-    public function getValue( string $sectionName, string $itemName );
+    public function getValue( string $sectionName, string $itemName ): mixed;
 
     /**
      * Gets if some of the items/sections are changed.
@@ -102,9 +102,9 @@ interface IConfiguration extends IArrayable, \ArrayAccess, \IteratorAggregate, \
      *
      * @param bool $isChanged
      *
-     * @return mixed
+     * @return IConfiguration
      */
-    public function setIsChanged( bool $isChanged );
+    public function setIsChanged( bool $isChanged ): IConfiguration;
 
     /**
      * Gets if a config item with defined section and item name already exists.

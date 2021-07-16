@@ -1,10 +1,10 @@
 <?php
 /**
  * @author         Ni Irrty <niirrty+code@gmail.com>
- * @copyright      © 2017-2020, Ni Irrty
+ * @copyright      © 2017-2021, Ni Irrty
  * @license        MIT
  * @since          2018-05-25
- * @version        0.3.0
+ * @version        0.4.0
  */
 
 
@@ -14,11 +14,11 @@ declare( strict_types=1 );
 namespace Niirrty\Config\Provider;
 
 
-use Niirrty\{ArgumentException, NiirrtyException, Type};
-use Niirrty\Config\{ConfigItem, ConfigSection, Configuration, IConfiguration};
-use Niirrty\Config\Exceptions\{ConfigParseException, ConfigProviderException, ConfigProviderOptionException};
-use Niirrty\IO\FileAccessException;
-use Niirrty\IO\Vfs\VfsManager;
+use \Niirrty\{ArgumentException, NiirrtyException, Type};
+use \Niirrty\Config\{ConfigItem, ConfigSection, Configuration, IConfiguration};
+use \Niirrty\Config\Exceptions\{ConfigParseException, ConfigProviderException, ConfigProviderOptionException};
+use \Niirrty\IO\FileAccessException;
+use \Niirrty\IO\Vfs\VfsManager;
 
 
 class PHPConfigProvider extends AbstractFileConfigProvider implements IConfigProvider
@@ -33,7 +33,7 @@ class PHPConfigProvider extends AbstractFileConfigProvider implements IConfigPro
     public function __construct( string $name = 'PHP' )
     {
 
-        parent::_construct( empty( $name ) ? 'PHP' : $name, [ 'php' ] );
+        parent::__construct( empty( $name ) ? 'PHP' : $name, [ 'php' ] );
 
     }
 
@@ -63,18 +63,16 @@ class PHPConfigProvider extends AbstractFileConfigProvider implements IConfigPro
             $sectionNames = null;
         }
 
-        $data = null;
-
         try
         {
             /** @noinspection PhpIncludeInspection */
-            $data = include $this->_options[ 'file' ];
+            $data = include $this->options[ 'file' ];
         }
         catch ( \Throwable $ex )
         {
             throw new ConfigProviderException(
-                $this->_name,
-                'Unable to load config data from file "' . $this->_options[ 'file' ] . '"!',
+                $this->name,
+                'Unable to load config data from file "' . $this->options[ 'file' ] . '"!',
                 $ex
             );
         }
@@ -82,8 +80,8 @@ class PHPConfigProvider extends AbstractFileConfigProvider implements IConfigPro
         if ( !\is_array( $data ) )
         {
             throw new ConfigProviderException(
-                $this->_name,
-                'Unable to load config data from file "' . $this->_options[ 'file' ] . '"!'
+                $this->name,
+                'Unable to load config data from file "' . $this->options[ 'file' ] . '"!'
             );
         }
 
@@ -94,7 +92,7 @@ class PHPConfigProvider extends AbstractFileConfigProvider implements IConfigPro
                 if ( !isset( $sectionData[ 'name' ] ) )
                 {
                     throw new ConfigParseException(
-                        $this->_name,
+                        $this->name,
                         'Invalid config section, a section must have a name.'
                     );
                 }
@@ -121,7 +119,7 @@ class PHPConfigProvider extends AbstractFileConfigProvider implements IConfigPro
                         if ( !isset( $itemData[ 'name' ] ) )
                         {
                             throw new ConfigParseException(
-                                $this->_name,
+                                $this->name,
                                 'Invalid config item in section "' . $sectionName . '", missing a item name.'
                             );
                         }
@@ -146,7 +144,7 @@ class PHPConfigProvider extends AbstractFileConfigProvider implements IConfigPro
                         if ( !$nullable )
                         {
                             throw new ConfigParseException(
-                                $this->_name,
+                                $this->name,
                                 'Invalid config item "'
                                 . $itemName
                                 . '" in section "'
@@ -165,7 +163,7 @@ class PHPConfigProvider extends AbstractFileConfigProvider implements IConfigPro
                         catch ( \Throwable $ex )
                         {
                             throw new ConfigParseException(
-                                $this->_name,
+                                $this->name,
                                 'Invalid config item "'
                                 . $itemName
                                 . '" value in section "'
@@ -196,18 +194,18 @@ class PHPConfigProvider extends AbstractFileConfigProvider implements IConfigPro
      * @throws ConfigProviderException
      * @throws FileAccessException
      */
-    public function write( IConfiguration $config )
+    public function write( IConfiguration $config ) : PHPConfigProvider
     {
 
-        if ( $this->_fileExists && !\is_writable( $this->_options[ 'file' ] ) )
+        if ( $this->_fileExists && !\is_writable( $this->options[ 'file' ] ) )
         {
             throw new ConfigProviderException(
-                $this->_name,
-                'Can not write to config file "' . $this->_options[ 'file' ] . '" if the file is not writable!'
+                $this->name,
+                'Can not write to config file "' . $this->options[ 'file' ] . '" if the file is not writable!'
             );
         }
 
-        $fp = IOHelper::fopen( $this->_options[ 'file' ], 'wb' );
+        $fp = IOHelper::fopen( $this->options[ 'file' ], 'wb' );
 
         \fwrite( $fp, '<?php' . "\nreturn [" );
 
@@ -272,23 +270,17 @@ class PHPConfigProvider extends AbstractFileConfigProvider implements IConfigPro
      * @param string $name  The option name.
      * @param mixed  $value The option value.
      */
-    protected function validateOption( string $name, $value )
-    {
-
-        // Do nothing
-        return;
-
-    }
+    protected function validateOption( string $name, mixed $value ) { }
 
 
-    private function valueToPHP( $value )
+    private function valueToPHP( $value ): string
     {
 
         try
         {
             return ( new Type( $value ) )->getPhpCode();
         }
-        catch ( NiirrtyException $e )
+        catch ( NiirrtyException )
         {
             return '';
         }
@@ -299,10 +291,10 @@ class PHPConfigProvider extends AbstractFileConfigProvider implements IConfigPro
     /**
      * Init a new PHP config provider.
      *
-     * @param string     $file       The path of the PHP config file.
-     * @param array      $extensions Allowed PHP file name extensions.
-     * @param string     $name       The name of the PHP provider.
-     * @param VfsManager $vfsManager Optional VFS Manager to handle VFS paths
+     * @param string          $file       The path of the PHP config file.
+     * @param array           $extensions Allowed PHP file name extensions.
+     * @param string          $name       The name of the PHP provider.
+     * @param VfsManager|null $vfsManager Optional VFS Manager to handle VFS paths
      *
      * @return PHPConfigProvider
      * @throws ConfigProviderOptionException

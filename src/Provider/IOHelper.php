@@ -1,10 +1,10 @@
 <?php
 /**
  * @author         Ni Irrty <niirrty+code@gmail.com>
- * @copyright      © 2017-2020, Ni Irrty
+ * @copyright      © 2017-2021, Ni Irrty
  * @license        MIT
  * @since          2018-06-05
- * @version        0.3.0
+ * @version        0.4.0
  */
 
 
@@ -40,12 +40,11 @@ class IOHelper
     public static function fOpen( string $file, string $mode )
     {
 
-        $fp = null;
         try
         {
             $fp = \fopen( $file, $mode );
         }
-        catch ( \Throwable $ex )
+        catch ( \Throwable )
         {
 
             $accessMode = FileAccessException::ACCESS_READ;
@@ -86,14 +85,14 @@ class IOHelper
      * @return bool|string
      * @throws FileAccessException
      */
-    public static function fileGetContents( string $file )
+    public static function fileGetContents( string $file ): bool|string
     {
 
         try
         {
             return \file_get_contents( $file );
         }
-        catch ( \Throwable $ex )
+        catch ( \Throwable )
         {
             throw FileAccessException::Read( $file );
         }
@@ -113,7 +112,7 @@ class IOHelper
         {
             file_put_contents( $file, $contents );
         }
-        catch ( \Throwable $ex )
+        catch ( \Throwable )
         {
             throw FileAccessException::Write( $file );
         }
