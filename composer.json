@@ -12,7 +12,7 @@
   "require": {
     "php": ">=8.0",
     "niirrty/niirrty.io": "^0.4",
-    "niirrty/niirrty.date": "^0.4",
+    "niirrty/niirrty.date": "^0.4.2",
     "ext-simplexml": "*",
     "ext-xmlwriter": "*",
     "ext-json": "*"
