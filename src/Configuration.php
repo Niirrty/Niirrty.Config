@@ -351,7 +351,7 @@ class Configuration implements IConfiguration
      * @return bool true on success or false on failure.
      *              The return value will be casted to boolean if non-boolean was returned.
      */
-    public function offsetExists( $offset ): bool
+    public function offsetExists( mixed $offset ): bool
     {
 
         [ $sectionName, $itemName ] = $this->expandOffset( $offset );
@@ -375,7 +375,7 @@ class Configuration implements IConfiguration
      *
      * @return IConfigSection|IConfigItem|null
      */
-    public function offsetGet( $offset ): IConfigSection|IConfigItem|null
+    public function offsetGet( mixed $offset ) : mixed
     {
 
         [ $sectionName, $itemName ] = $this->expandOffset( $offset );
@@ -402,7 +402,7 @@ class Configuration implements IConfiguration
      *
      * @throws ArgumentException
      */
-    public function offsetSet( $offset, $value )
+    public function offsetSet( mixed $offset, mixed $value ) : void
     {
 
         if ( !( $value instanceof IConfigSection ) && !( $value instanceof IConfigItem ) )
@@ -483,7 +483,7 @@ class Configuration implements IConfiguration
      *
      * @param mixed $offset The offset to unset.
      */
-    public function offsetUnset( $offset )
+    public function offsetUnset( mixed $offset ) : void
     {
 
         [ $sectionName, $itemName ] = $this->expandOffset( $offset );

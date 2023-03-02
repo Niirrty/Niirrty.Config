@@ -242,7 +242,7 @@ class ConfigSection implements IConfigSection
      * @return bool true on success or false on failure.
      *              The return value will be casted to boolean if non-boolean was returned.
      */
-    public function offsetExists( $offset ): bool
+    public function offsetExists( mixed $offset ): bool
     {
 
         return isset( $this->_items[ $offset ] );
@@ -258,7 +258,7 @@ class ConfigSection implements IConfigSection
      *
      * @return IConfigItem|null
      */
-    public function offsetGet( $offset ): ?IConfigItem
+    public function offsetGet( mixed $offset ): mixed 
     {
 
         return $this->offsetExists( $offset ) ? $this->_items[ $offset ] : null;
@@ -275,7 +275,7 @@ class ConfigSection implements IConfigSection
      *
      * @throws ArgumentException
      */
-    public function offsetSet( $offset, $value )
+    public function offsetSet( mixed $offset, mixed $value ) : void
     {
 
         if ( !( $value instanceof IConfigItem ) )
@@ -316,7 +316,7 @@ class ConfigSection implements IConfigSection
      *
      * @param mixed $offset The offset to unset.
      */
-    public function offsetUnset( $offset )
+    public function offsetUnset( mixed $offset ) : void
     {
 
         unset( $this->_items[ $offset ] );
