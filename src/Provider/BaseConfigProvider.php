@@ -18,7 +18,7 @@ use Niirrty\Config\Exceptions\ConfigProviderOptionException;
 
 
 /**
- * Abstract base implementation of {@see \Niirrty\Config\Provider\IConfigProvider}
+ * Abstract base implementation of {@see IConfigProvider}
  *
  * @package Niirrty\Config\Provider
  */
@@ -118,10 +118,10 @@ abstract class BaseConfigProvider implements IConfigProvider
      * @param string $name
      * @param mixed  $value
      *
-     * @return IConfigProvider
+     * @return self
      * @throws ConfigProviderOptionException
      */
-    public function setOption( string $name, mixed $value ): IConfigProvider
+    public function setOption( string $name, mixed $value ): self
     {
 
         $methodName = 'set' . \ucfirst( $name );
@@ -141,7 +141,7 @@ abstract class BaseConfigProvider implements IConfigProvider
     }
 
     /**
-     * Gets if a options with defined name exists.
+     * Gets if option with defined name exists.
      *
      * @param string $name
      *
@@ -162,7 +162,7 @@ abstract class BaseConfigProvider implements IConfigProvider
      *
      * @throws ConfigProviderOptionException If a wrong option is defined.
      */
-    protected abstract function validateOption( string $name, mixed $value );
+    protected abstract function validateOption( string $name, mixed $value ) : void;
 
 
 }

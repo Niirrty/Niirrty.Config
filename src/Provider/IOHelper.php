@@ -105,12 +105,12 @@ class IOHelper
      *
      * @throws FileAccessException
      */
-    public static function fileSetContents( string $file, string $contents )
+    public static function fileSetContents( string $file, string $contents ) : void
     {
 
         try
         {
-            file_put_contents( $file, $contents );
+            \file_put_contents( $file, $contents );
         }
         catch ( \Throwable )
         {

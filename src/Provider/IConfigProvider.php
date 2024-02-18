@@ -74,7 +74,7 @@ interface IConfigProvider
      * @return IConfigProvider
      * @throws ConfigProviderOptionException
      */
-    public function setOption( string $name, mixed $value ): IConfigProvider;
+    public function setOption( string $name, mixed $value ): self;
 
     /**
      * Gets if a options with defined name exists.
@@ -104,7 +104,7 @@ interface IConfigProvider
      * @return mixed
      * @throws ConfigProviderException
      */
-    public function write( IConfiguration $config ) : IConfigProvider;
+    public function write( IConfiguration $config ) : self;
 
 
 }

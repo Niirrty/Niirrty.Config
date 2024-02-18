@@ -14,7 +14,7 @@ declare( strict_types=1 );
 namespace Niirrty\Config;
 
 
-use \Niirrty\IArrayable;
+use \Niirrty\IToArray;
 
 
 /**
@@ -23,7 +23,7 @@ use \Niirrty\IArrayable;
  * @package Niirrty\Config
  */
 interface IConfigSection
-    extends IConfigElementBase, IArrayable, \ArrayAccess, \IteratorAggregate, \Countable
+    extends IConfigElementBase, IToArray, \ArrayAccess, \IteratorAggregate, \Countable
 {
 
 
@@ -34,7 +34,7 @@ interface IConfigSection
      *
      * @return IConfigSection
      */
-    public function setItem( IConfigItem $item ): IConfigSection;
+    public function setItem( IConfigItem $item ): self;
 
     /**
      * Sets the value of a already defined config item.
@@ -44,7 +44,7 @@ interface IConfigSection
      *
      * @return IConfigSection
      */
-    public function setValue( string $name, mixed $value ): IConfigSection;
+    public function setValue( string $name, mixed $value ): self;
 
     /**
      * Gets the config item for defined key, or null if the key is not defined.
@@ -78,7 +78,7 @@ interface IConfigSection
      *
      * @return IConfigSection
      */
-    public function setIsChanged( bool $isChanged ): IConfigSection;
+    public function setIsChanged( bool $isChanged ): self;
 
     /**
      * Gets if a config item with defined name already exists.

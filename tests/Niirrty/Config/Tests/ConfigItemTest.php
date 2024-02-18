@@ -16,7 +16,8 @@ use Niirrty\Config\ConfigItem;
 use Niirrty\Config\ConfigSection;
 use Niirrty\Date\DateTime;
 use Niirrty\Date\Time;
-use Niirrty\IArrayable;
+use Niirrty\IToArray;
+use Niirrty\PhpException;
 use PHPUnit\Framework\TestCase;
 
 
@@ -371,12 +372,9 @@ class ConfigItemTest extends TestCase
         $this->_itemArray->setValue( new \ArrayIterator( [ 'foo', 'bar' ] ) );
         $this->assertSame( [ 'foo', 'bar' ], $this->_itemArray->getValue() );
         $this->_itemArray->setValue(
-            new class implements IArrayable
+            new class implements IToArray
             {
-
-
                 public function toArray(): array { return [ 1, 3 ]; }
-
 
             }
         );
@@ -430,6 +428,7 @@ class ConfigItemTest extends TestCase
     {
 
         $this->expectException( ArgumentException::class );
+        $this->expectException( PhpException::class );
         $this->_itemArray->setValue( '$$$$' );
 
     }

@@ -47,7 +47,7 @@ abstract class AbstractFileConfigProvider extends BaseConfigProvider
      * @return AbstractFileConfigProvider
      * @throws ConfigProviderOptionException
      */
-    public function setFile( string $filePath, ?IVfsManager $vfsManager = null ): AbstractFileConfigProvider
+    public function setFile( string $filePath, ?IVfsManager $vfsManager = null ): self
     {
 
         if ( null !== $vfsManager )
@@ -137,7 +137,7 @@ abstract class AbstractFileConfigProvider extends BaseConfigProvider
      * @return PHPConfigProvider
      * @throws ConfigProviderOptionException
      */
-    public function setExtensions( array $extensions ): AbstractFileConfigProvider
+    public function setExtensions( array $extensions ): self
     {
 
         if ( 1 > \count( $extensions ) )

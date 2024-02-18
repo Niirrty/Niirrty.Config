@@ -85,7 +85,7 @@ class ConfigSection implements IConfigSection
      *
      * @return ConfigSection
      */
-    public function setItem( IConfigItem $item ) : ConfigSection
+    public function setItem( IConfigItem $item ) : self
     {
 
         $item->setParent( $this );
@@ -106,7 +106,7 @@ class ConfigSection implements IConfigSection
      * @return ConfigSection
      * @throws ArgumentException If $nameOrId is unknown
      */
-    public function setValue( string $name, mixed $value ) : ConfigSection
+    public function setValue( string $name, mixed $value ) : self
     {
 
         if ( !isset( $this[ $name ] ) )
@@ -184,7 +184,7 @@ class ConfigSection implements IConfigSection
      *
      * @return ConfigSection
      */
-    public function setIsChanged( bool $isChanged ) : ConfigSection
+    public function setIsChanged( bool $isChanged ) : self
     {
 
         $this->_changed = $isChanged;

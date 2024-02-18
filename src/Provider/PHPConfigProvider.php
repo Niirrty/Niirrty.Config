@@ -44,8 +44,7 @@ class PHPConfigProvider extends AbstractFileConfigProvider implements IConfigPro
      * @param string[]|null $sectionNames
      *
      * @return IConfiguration
-     * @throws ConfigParseException
-     * @throws ConfigProviderException|ArgumentException
+     * @throws ConfigParseException|ConfigProviderException|ArgumentException|\Throwable
      */
     public function read( ?array $sectionNames = null ): IConfiguration
     {
@@ -65,7 +64,6 @@ class PHPConfigProvider extends AbstractFileConfigProvider implements IConfigPro
 
         try
         {
-            /** @noinspection PhpIncludeInspection */
             $data = include $this->options[ 'file' ];
         }
         catch ( \Throwable $ex )
@@ -194,7 +192,7 @@ class PHPConfigProvider extends AbstractFileConfigProvider implements IConfigPro
      * @throws ConfigProviderException
      * @throws FileAccessException
      */
-    public function write( IConfiguration $config ) : PHPConfigProvider
+    public function write( IConfiguration $config ) : self
     {
 
         if ( $this->_fileExists && !\is_writable( $this->options[ 'file' ] ) )
@@ -270,7 +268,7 @@ class PHPConfigProvider extends AbstractFileConfigProvider implements IConfigPro
      * @param string $name  The option name.
      * @param mixed  $value The option value.
      */
-    protected function validateOption( string $name, mixed $value ) { }
+    protected function validateOption( string $name, mixed $value ) : void { }
 
 
     private function valueToPHP( $value ): string

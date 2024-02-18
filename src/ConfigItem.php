@@ -14,7 +14,8 @@ declare( strict_types=1 );
 namespace Niirrty\Config;
 
 
-use \Niirrty\{ArgumentException, IArrayable, Type, TypeTool};
+use Niirrty\
+{ArgumentException, IToArray, Type, TypeTool};
 use \Niirrty\Date\DateTime;
 
 
@@ -223,7 +224,7 @@ class ConfigItem implements IConfigItem
      *
      * @return ConfigItem
      */
-    public function setParent( IConfigElementBase $parentSection ): ConfigItem
+    public function setParent( IConfigElementBase $parentSection ): self
     {
 
         $this->parent = $parentSection;
@@ -240,7 +241,7 @@ class ConfigItem implements IConfigItem
      * @return ConfigItem
      * @throws ArgumentException|\Throwable if the config value is invalid
      */
-    public function setValue( mixed $value ) : ConfigItem
+    public function setValue( mixed $value ) : self
     {
 
         if ( $this->_value === $value )
@@ -311,7 +312,7 @@ class ConfigItem implements IConfigItem
 
                     return $this;
                 }
-                if ( $value instanceof IArrayable )
+                if ( $value instanceof IToArray )
                 {
                     $this->_value = $value->toArray();
 
@@ -414,7 +415,7 @@ class ConfigItem implements IConfigItem
      *
      * @return ConfigItem
      */
-    public function setIsChanged( bool $changed ): ConfigItem
+    public function setIsChanged( bool $changed ): self
     {
 
         $this->_changed = $changed;
@@ -430,7 +431,7 @@ class ConfigItem implements IConfigItem
      *
      * @return ConfigItem
      */
-    public function setIsNullable( bool $nullable ) : ConfigItem
+    public function setIsNullable( bool $nullable ) : self
     {
 
         $this->_nullable = $nullable;
@@ -447,7 +448,7 @@ class ConfigItem implements IConfigItem
      *
      * @return IConfigItem
      */
-    public function setType( string $typeName ) : ConfigItem
+    public function setType( string $typeName ) : self
     {
 
         $this->_type = $typeName;
@@ -505,7 +506,6 @@ class ConfigItem implements IConfigItem
         return $item;
 
     }
-
 
 }
 

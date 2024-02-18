@@ -15,8 +15,7 @@ namespace Niirrty\Config;
 
 
 use Niirrty\ArgumentException;
-use Niirrty\IArrayable;
-use Niirrty\IStringable;
+use Niirrty\{IToString,IToArray};
 
 
 /**
@@ -24,7 +23,7 @@ use Niirrty\IStringable;
  *
  * @package Niirrty\Config
  */
-interface IConfigItem extends IConfigElementBase, IStringable, IArrayable
+interface IConfigItem extends IConfigElementBase, IToString, IToArray
 {
 
 
@@ -92,7 +91,7 @@ interface IConfigItem extends IConfigElementBase, IStringable, IArrayable
      * @param IConfigElementBase $parentSection
      * @return IConfigItem
      */
-    public function setParent( IConfigElementBase $parentSection ): IConfigItem;
+    public function setParent( IConfigElementBase $parentSection ): self;
 
     /**
      * Sets a new value.
@@ -102,7 +101,7 @@ interface IConfigItem extends IConfigElementBase, IStringable, IArrayable
      * @return IConfigItem
      * @throws ArgumentException if the config value is invalid
      */
-    public function setValue( mixed $value ): IConfigItem;
+    public function setValue( mixed $value ): self;
 
     /**
      * Sets if the item is nullable.
@@ -111,7 +110,7 @@ interface IConfigItem extends IConfigElementBase, IStringable, IArrayable
      *
      * @return IConfigItem
      */
-    public function setIsNullable( bool $nullable ): IConfigItem;
+    public function setIsNullable( bool $nullable ): self;
 
     /**
      * Sets the accepted item value type.
@@ -120,7 +119,7 @@ interface IConfigItem extends IConfigElementBase, IStringable, IArrayable
      *
      * @return IConfigItem
      */
-    public function setType( string $typeName ): IConfigItem;
+    public function setType( string $typeName ): self;
 
     /**
      * Gets if the value is marked as changed.
@@ -136,7 +135,7 @@ interface IConfigItem extends IConfigElementBase, IStringable, IArrayable
      *
      * @return IConfigItem
      */
-    public function setIsChanged( bool $changed ): IConfigItem;
+    public function setIsChanged( bool $changed ): self;
 
 
 }

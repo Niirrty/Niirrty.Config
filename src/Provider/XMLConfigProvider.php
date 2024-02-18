@@ -42,9 +42,7 @@ class XMLConfigProvider extends AbstractFileConfigProvider implements IConfigPro
      * @param string[]|null $sectionNames
      *
      * @return IConfiguration
-     * @throws ConfigParseException
-     * @throws ConfigProviderException
-     * @throws ArgumentException
+     * @throws ConfigParseException|ConfigProviderException|ArgumentException|\Throwable
      */
     public function read( ?array $sectionNames = null ): IConfiguration
     {
@@ -218,7 +216,7 @@ class XMLConfigProvider extends AbstractFileConfigProvider implements IConfigPro
      * @return XMLConfigProvider
      * @throws ConfigProviderException
      */
-    public function write( IConfiguration $config ) : XMLConfigProvider
+    public function write( IConfiguration $config ) : self
     {
 
         // If the file is not writable trigger a exception
@@ -311,7 +309,7 @@ class XMLConfigProvider extends AbstractFileConfigProvider implements IConfigPro
      * @param string $name  The option name.
      * @param mixed  $value The option value.
      */
-    protected function validateOption( string $name, mixed $value ) { }
+    protected function validateOption( string $name, mixed $value ) : void { }
 
     /**
      * Init a new XML config provider.

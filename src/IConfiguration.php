@@ -16,10 +16,10 @@ namespace Niirrty\Config;
 
 use \Niirrty\ArgumentException;
 use \Niirrty\Config\Provider\IConfigProvider;
-use \Niirrty\IArrayable;
+use \Niirrty\IToArray;
 
 
-interface IConfiguration extends IArrayable, \ArrayAccess, \IteratorAggregate, \Countable
+interface IConfiguration extends IToArray, \ArrayAccess, \IteratorAggregate, \Countable
 {
 
 
@@ -38,7 +38,7 @@ interface IConfiguration extends IArrayable, \ArrayAccess, \IteratorAggregate, \
      * @return IConfiguration
      * @throws ArgumentException If the item not define a parent section
      */
-    public function setItem( IConfigItem $item ): IConfiguration;
+    public function setItem( IConfigItem $item ): self;
 
     /**
      * Sets the config section.
@@ -47,7 +47,7 @@ interface IConfiguration extends IArrayable, \ArrayAccess, \IteratorAggregate, \
      *
      * @return IConfiguration
      */
-    public function setSection( IConfigSection $section ): IConfiguration;
+    public function setSection( IConfigSection $section ): self;
 
     /**
      * Sets the configuration value.
@@ -59,7 +59,7 @@ interface IConfiguration extends IArrayable, \ArrayAccess, \IteratorAggregate, \
      * @return IConfiguration
      * @throws ArgumentException
      */
-    public function setValue( string $sectionName, string $itemName, mixed $value ): IConfiguration;
+    public function setValue( string $sectionName, string $itemName, mixed $value ): self;
 
     /**
      * Gets the config item for defined defined section and item name, or null if not found.
@@ -104,7 +104,7 @@ interface IConfiguration extends IArrayable, \ArrayAccess, \IteratorAggregate, \
      *
      * @return IConfiguration
      */
-    public function setIsChanged( bool $isChanged ): IConfiguration;
+    public function setIsChanged( bool $isChanged ): self;
 
     /**
      * Gets if a config item with defined section and item name already exists.

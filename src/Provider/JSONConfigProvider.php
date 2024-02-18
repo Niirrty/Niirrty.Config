@@ -30,7 +30,7 @@ use Niirrty\IO\Vfs\VfsManager;
  *
  * Each configuration can contain 0 or more configuration sections.
  *
- * Each config section can contain 0 or more configuration items (a named config value with some meta data)
+ * Each config section can contain 0 or more configuration items (a named config value with some metadata)
  *
  * A item can not be defined without a owning section
  *
@@ -90,10 +90,7 @@ class JSONConfigProvider extends AbstractFileConfigProvider implements IConfigPr
      * @param string[]|null $sectionNames
      *
      * @return IConfiguration
-     * @throws ConfigParseException
-     * @throws ConfigProviderException
-     * @throws FileAccessException
-     * @throws ArgumentException
+     * @throws ConfigParseException|ConfigProviderException|FileAccessException|ArgumentException|\Throwable
      */
     public function read( ?array $sectionNames = null ): IConfiguration
     {
@@ -228,7 +225,7 @@ class JSONConfigProvider extends AbstractFileConfigProvider implements IConfigPr
      * @throws ConfigProviderException
      * @throws FileAccessException
      */
-    public function write( IConfiguration $config ) : JSONConfigProvider
+    public function write( IConfiguration $config ) : self
     {
 
         // If the file is not writable trigger a exception
@@ -259,7 +256,7 @@ class JSONConfigProvider extends AbstractFileConfigProvider implements IConfigPr
      * @param string $name  The option name.
      * @param mixed  $value The option value.
      */
-    protected function validateOption( string $name, mixed $value ) {}
+    protected function validateOption( string $name, mixed $value ) : void {}
 
 
     /**

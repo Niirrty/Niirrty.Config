@@ -47,7 +47,7 @@ class Configuration implements IConfiguration
      *
      * @throws ArgumentException
      */
-    public function __construct( private IConfigProvider $provider, array $input = [] )
+    public function __construct( private readonly IConfigProvider $provider, array $input = [] )
     {
 
         if ( \count( $input ) > 0 )
@@ -112,7 +112,7 @@ class Configuration implements IConfiguration
      * @return Configuration
      * @throws ArgumentException If the item not define a parent section
      */
-    public function setItem( IConfigItem $item ) : Configuration
+    public function setItem( IConfigItem $item ) : self
     {
 
         if ( null === $item->getParent() || '' === $item->getParent()->getName() )
@@ -149,7 +149,7 @@ class Configuration implements IConfiguration
      * @return Configuration
      * @throws ArgumentException
      */
-    public function setValue( string $sectionName, string $itemName, mixed $value ) : Configuration
+    public function setValue( string $sectionName, string $itemName, mixed $value ) : self
     {
 
         if ( !$this->hasSection( $sectionName ) )
@@ -184,7 +184,7 @@ class Configuration implements IConfiguration
      *
      * @return Configuration
      */
-    public function setSection( IConfigSection $section ) : Configuration
+    public function setSection( IConfigSection $section ) : self
     {
 
         $this->_sections[ $section->getName() ] = $section;
@@ -285,12 +285,12 @@ class Configuration implements IConfiguration
 
         $this->_changed = $isChanged;
 
-        if ( !$isChanged )
+        if ( ! $isChanged )
         {
 
             foreach ( $this->_sections as $section )
             {
-                $section->setIsChanged( $isChanged );
+                $section->setIsChanged( false );
             }
 
         }
